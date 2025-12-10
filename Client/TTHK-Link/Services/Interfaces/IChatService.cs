@@ -7,7 +7,7 @@ using TTHK_Link.Models;
 
 namespace TTHK_Link.Services.Interfaces
 {
-    internal class IChatService
+    internal interface IChatService
     {
         Task<IReadOnlyList<Message>> GetMessagesAsync(string groupId);
         Task<Message> SendMessageAsync(string groupId, string text, string imagePath = null);
