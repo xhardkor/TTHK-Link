@@ -7,7 +7,7 @@ using TTHK_Link.Models;
 
 namespace TTHK_Link.Services.Interfaces
 {
-    internal interface IAuthService
+    public interface IAuthService
     {
         Task<AuthResult> LoginAsync(LoginRequest request);
         Task LogoutAsync();

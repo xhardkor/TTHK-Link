@@ -9,8 +9,8 @@
         public string Text { get; set; }
         public string? ImageUrl { get; set; }   // сделай nullable
         public DateTime CreatedAt { get; set; }
-        
-        //ui
+
+        //ui helper
         public bool IsMine { get; set; }
-    }
+    }   
 }

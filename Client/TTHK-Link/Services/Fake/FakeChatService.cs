@@ -1,5 +1,4 @@
-﻿// Services/Fake/FakeChatService.cs
-using TTHK_Link.Models;
+﻿using TTHK_Link.Models;
 using TTHK_Link.Services.Interfaces;
 
 namespace TTHK_Link.Services.Fake;
@@ -18,7 +17,7 @@ public class FakeChatService : IChatService
     {
         if (!_messages.TryGetValue(groupId, out var list))
         {
-            // первый фейковый месседж
+            // first
             list = new List<Message>
             {
                 new Message
