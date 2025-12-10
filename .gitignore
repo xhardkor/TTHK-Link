@@ -1,0 +1,52 @@
+# =====================
+# Visual Studio
+# =====================
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# =====================
+# JetBrains / VS Code
+# =====================
+.idea/
+.vscode/
+*.sln.iml
+*.userprefs
+
+# =====================
+# .NET build outputs
+# =====================
+bin/
+obj/
+*/bin/
+*/obj/
+
+# =====================
+# Logs & temp files
+# =====================
+*.log
+*.tmp
+*.temp
+
+# =====================
+# Debug / publish
+# =====================
+*.pdb
+publish/
+*.publish
+
+# =====================
+# Local databases
+# =====================
+*.db
+# дополнить позже
+
+# =====================
+# Secrets & env
+# =====================
+.env
+.env.*
+appsettings.Development.json
+secrets.json
