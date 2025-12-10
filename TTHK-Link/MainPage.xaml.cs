@@ -14,9 +14,9 @@ public partial class MainPage : ContentPage
         count++;
 
         if (count == 1)
-            CounterBtn.Text = $"Clicked {count} xd dddddddd";
+            CounterBtn.Text = $"Clicked {count} xd test test test";
         else
-            CounterBtn.Text = $"Clicked {count} xdddd heheheehehhe";
+            CounterBtn.Text = $"Clicked {count} chudo judo";
 
         SemanticScreenReader.Announce(CounterBtn.Text);
     }
