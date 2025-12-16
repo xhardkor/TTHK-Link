@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="TTHK_Link.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Login">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="32"
+            Spacing="20"
+            VerticalOptions="Center">
+
+            <!-- LOGO ILI LEGO -->
+            <Image Source="tthk_logo.png"
+                   HeightRequest="90"
+                   HorizontalOptions="Center" />
+            
+            <!-- Zagolovok -->
+            <Label Text="TTHK Link"
+                   Style="{StaticResource PageTitle}" />
+
+            <!-- Podzagolovok -->
+            <Label Text="Logi sisse"
+                   FontSize="16"
+                   HorizontalOptions="Center"
+                   TextColor="{StaticResource TextColor}" />
+
+            <!-- Po4ta -->
+            <VerticalStackLayout Spacing="6">
+                <Label Text="E-post" />
+                <Entry Placeholder="name@tthk.ee"
+                       Keyboard="Email"
+                       Text="{Binding Email}" />
+            </VerticalStackLayout>
+
+            <!-- Password -->
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Parool" />
+                <Entry Placeholder="••••••••"
+                       IsPassword="True"
+                       Text="{Binding Password}" />
+            </VerticalStackLayout>
+
+            <!-- Error-->
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="Red"
+                   FontSize="13"
+                   HorizontalOptions="Center"
+                   IsVisible="{Binding HasError}" />
+
+            <!-- Knopka -->
+            <Button Text="Logi sisse"
+                    Margin="0,20,0,0"
+                    Command="{Binding LoginCommand}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
