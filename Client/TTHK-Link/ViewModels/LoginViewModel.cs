@@ -9,15 +9,12 @@ public partial class LoginViewModel : ObservableObject
 {
     private readonly IAuthService _authService;
 
-   
-    [ObservableProperty]
-    private string username = "";
+    [ObservableProperty] private string username = "";
+    [ObservableProperty] private string password = "";
+    [ObservableProperty] private bool isBusy;
 
-    [ObservableProperty]
-    private string password = "";
-
-    [ObservableProperty]
-    private bool isBusy;
+    // Veateade kasutajale (näitame lehel)
+    [ObservableProperty] private string error = "";
 
     public LoginViewModel(IAuthService authService)
     {
@@ -27,21 +24,35 @@ public partial class LoginViewModel : ObservableObject
     [RelayCommand]
     private async Task LoginAsync()
     {
-        if (IsBusy)
-            return;
+        // Kui juba töötab, ei käivita uuesti
+        if (IsBusy) return;
+
+        IsBusy = true;
+        Error = "";
 
         try
         {
-            IsBusy = true;
-
-            var result = await _authService.LoginAsync(new LoginRequest
+            // Proovime sisse logida (fake auth)
+            var ok = await _authService.LoginAsync(new LoginRequest
             {
-                Username = Username,  
+                Username = Username,
                 Password = Password
             });
 
-            // TODO: if ok go to main page
-            //  await Shell.Current.GoToAsync("//MainPage");
+            // Kui login ebaõnnestus, näitame veateadet
+            if (!ok)
+            {
+                Error = "Vale kasutajanimi või parool (proovi admin/admin)";
+                return;
+            }
+
+            // Edukas login → absoluutne navigeerimine gruppide lehele
+            await Shell.Current.GoToAsync("//groups");
+        }
+        catch (Exception ex)
+        {
+            // Kui midagi läheb valesti (nt route puudub), näitame vea teksti
+            Error = ex.Message;
         }
         finally
         {

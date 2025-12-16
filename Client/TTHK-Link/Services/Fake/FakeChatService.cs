@@ -13,9 +13,9 @@ public class FakeChatService : IChatService
         _authService = authService;
     }
 
-    public Task<IReadOnlyList<Message>> GetMessagesAsync(string groupId)
+    public Task<IReadOnlyList<Message>> GetMessagesAsync(string courseId)
     {
-        if (!_messages.TryGetValue(groupId, out var list))
+        if (!_messages.TryGetValue(courseId, out var list))
         {
             // first
             list = new List<Message>
@@ -23,36 +23,36 @@ public class FakeChatService : IChatService
                 new Message
                 {
                     Id = Guid.NewGuid().ToString(),
-                    GroupId = groupId,
+                    CourseId = courseId,
                     UserId = "teacher",
-                    Text = "Tere tulemast chatti!",
+                    Msg = "Tere tulemast chatti!",
                     ImageUrl = null,
                     CreatedAt = DateTime.UtcNow.AddMinutes(-5),
                     IsMine = false
                 }
             };
-            _messages[groupId] = list;
+            _messages[courseId] = list;
         }
 
         return Task.FromResult<IReadOnlyList<Message>>(list);
     }
 
-    public Task<Message> SendMessageAsync(string groupId, string text, string? imagePath = null)
+    public Task<Message> SendMessageAsync(string courseId, string text, string? imagePath = null)
     {
         var user = _authService.CurrentUser;
 
-        if (!_messages.TryGetValue(groupId, out var list))
+        if (!_messages.TryGetValue(courseId, out var list))
         {
             list = new List<Message>();
-            _messages[groupId] = list;
+            _messages[courseId] = list;
         }
 
         var msg = new Message
         {
             Id = Guid.NewGuid().ToString(),
-            GroupId = groupId,
+            CourseId = courseId,
             UserId = user.Id,
-            Text = text,
+            Msg = text,
             ImageUrl = imagePath,
             CreatedAt = DateTime.UtcNow,
             IsMine = true

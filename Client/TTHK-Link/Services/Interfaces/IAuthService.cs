@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TTHK_Link.Models;
+﻿using TTHK_Link.Models;
 
-namespace TTHK_Link.Services.Interfaces
+public interface IAuthService
 {
-    public interface IAuthService
-    {
-        Task<AuthResult> LoginAsync(LoginRequest request);
-        Task LogoutAsync();
+    User? CurrentUser { get; }
 
-        User CurrentUser { get; }
-    }
+    Task<bool> LoginAsync(LoginRequest request);
+
+    Task LogoutAsync();
 }

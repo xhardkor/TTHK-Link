@@ -1,45 +1,33 @@
 ﻿using TTHK_Link.Models;
 using TTHK_Link.Services.Interfaces;
 
-namespace TTHK_Link.Services.Fake;
-
 public class FakeAuthService : IAuthService
 {
-    private User? _currentUser;
+    public User? CurrentUser { get; private set; }
 
-    public User CurrentUser
+    public Task<bool> LoginAsync(LoginRequest request)
     {
-        get
+        if (request.Username == "admin" &&
+            request.Password == "admin")
         {
-            if (_currentUser == null)
-                throw new InvalidOperationException("User is not logged in");
+            CurrentUser = new User
+            {
+                Id = "1",
+                Login = "admin",
+                IsAdmin = true,
+                GroupId = "TiTge23"
+            };
 
-            return _currentUser;
+            return Task.FromResult(true);
         }
-    }
 
-    public Task<AuthResult> LoginAsync(LoginRequest request)
-    {
-        var user = new User
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserName = request.Username,
-            IsAdmin = request.Username == "admin",
-            GroupNameId = "TiTge24"
-        };
-
-        _currentUser = user;
-
-        return Task.FromResult(new AuthResult
-        {
-            User = user,
-            Token = "fake-token"
-        });
+        CurrentUser = null;
+        return Task.FromResult(false);
     }
 
     public Task LogoutAsync()
     {
-        _currentUser = null;
+        CurrentUser = null;
         return Task.CompletedTask;
     }
 }

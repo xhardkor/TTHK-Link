@@ -69,4 +69,22 @@
       <Folder Include="Services\Http\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Pages\CoursePage.xaml.cs">
+        <DependentUpon>CoursePage.xaml</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <MauiXaml Update="Pages\ChatPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </MauiXaml>
+      <MauiXaml Update="Pages\CoursePage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </MauiXaml>
+      <MauiXaml Update="Pages\LoginPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </MauiXaml>
+    </ItemGroup>
+
 </Project>
