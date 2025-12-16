@@ -27,6 +27,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<IAuthService, FakeAuthService>();
         builder.Services.AddSingleton<ICourseService, FakeCourseService>();
         builder.Services.AddSingleton<IChatService, FakeChatService>();
+        builder.Services.AddSingleton<IUserService, FakeUserService>();
+
 
         // view models
         builder.Services.AddTransient<LoginViewModel>();

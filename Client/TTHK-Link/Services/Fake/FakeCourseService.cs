@@ -24,7 +24,7 @@ public class FakeCourseService : ICourseService
             new Course
             {
                 Id = "c3",
-                GroupId = "TiTge23",
+                GroupId = "TiTge24",
                 CourseName = "Andmebaasid",
                 Description = "Teine rühm"
             }

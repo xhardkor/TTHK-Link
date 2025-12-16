@@ -3,7 +3,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="TTHK_Link.Pages.CoursePage">
 
-    <CollectionView ItemsSource="{Binding Items}">
+    <CollectionView ItemsSource="{Binding Items}"
+                SelectionMode="Single"
+                SelectionChanged="OnCourseSelected">
         <CollectionView.ItemTemplate>
             <DataTemplate>
                 <Frame Margin="10" Padding="10">
@@ -11,7 +13,7 @@
                         <!-- Kursuse nimi -->
                         <Label Text="{Binding CourseName}" FontSize="18" />
 
-                        <!-- Rühm (GroupId) -->
+                        <!-- Rühma ID -->
                         <Label Text="{Binding GroupId}" Opacity="0.7" />
 
                         <!-- Kirjeldus -->

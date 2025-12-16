@@ -10,6 +10,8 @@
         public string? ImageUrl { get; set; }   // сделай nullable
         public DateTime CreatedAt { get; set; } // + 
 
+        public string SenderName { get; set; } // +
+
         //ui helper
         public bool IsMine { get; set; }
     }   

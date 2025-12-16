@@ -15,7 +15,7 @@ public class FakeAuthService : IAuthService
                 Id = "1",
                 Login = "admin",
                 IsAdmin = true,
-                GroupId = "TiTge23"
+                GroupId = "TiTge24"
             };
 
             return Task.FromResult(true);
