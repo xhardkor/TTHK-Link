@@ -13,8 +13,7 @@
         <Label Text="{Binding Error}" TextColor="Red" />
 
         <Button Text="Login" Command="{Binding LoginCommand}" />
-
-
+        <Button Text="Register" Command="{Binding RegisterCommand}" />
 
     </VerticalStackLayout>
 </ContentPage>

@@ -7,56 +7,56 @@ namespace TTHK_Link.ViewModels;
 
 public partial class LoginViewModel : ObservableObject
 {
-    private readonly IAuthService _authService;
+    private readonly IAuthService _auth;
 
     [ObservableProperty] private string username = "";
     [ObservableProperty] private string password = "";
-    [ObservableProperty] private bool isBusy;
-
-    // Veateade kasutajale (näitame lehel)
     [ObservableProperty] private string error = "";
 
-    public LoginViewModel(IAuthService authService)
+    public LoginViewModel(IAuthService auth)
     {
-        _authService = authService;
+        _auth = auth;
     }
 
     [RelayCommand]
-    private async Task LoginAsync()
+    public async Task LoginAsync()
     {
-        // Kui juba töötab, ei käivita uuesti
-        if (IsBusy) return;
-
-        IsBusy = true;
         Error = "";
 
-        try
+        var ok = await _auth.LoginAsync(new LoginRequest
         {
-            // Proovime sisse logida (fake auth)
-            var ok = await _authService.LoginAsync(new LoginRequest
-            {
-                Username = Username,
-                Password = Password
-            });
+            Username = Username,
+            Password = Password
+        });
 
-            // Kui login ebaõnnestus, näitame veateadet
-            if (!ok)
-            {
-                Error = "Vale kasutajanimi või parool (proovi admin/admin)";
-                return;
-            }
+        if (!ok)
+        {
+            Error = "Kasutajat ei leitud või parool on vale.";
+            return;
+        }
 
-            // Edukas login → absoluutne navigeerimine gruppide lehele
-            await Shell.Current.GoToAsync("//groups");
-        }
-        catch (Exception ex)
+        // Pärast edukat login'it suuname kursustele
+        await Shell.Current.GoToAsync("//groups");
+    }
+
+    [RelayCommand]
+    public async Task RegisterAsync()
+    {
+        Error = "";
+
+        var ok = await _auth.RegisterAsync(new LoginRequest
         {
-            // Kui midagi läheb valesti (nt route puudub), näitame vea teksti
-            Error = ex.Message;
-        }
-        finally
+            Username = Username,
+            Password = Password
+        });
+
+        if (!ok)
         {
-            IsBusy = false;
+            Error = "Registreerimine ebaõnnestus (kasutaja juba olemas?).";
+            return;
         }
+
+        // Pärast edukat registreerimist suuname kursustele
+        await Shell.Current.GoToAsync("//groups");
     }
 }

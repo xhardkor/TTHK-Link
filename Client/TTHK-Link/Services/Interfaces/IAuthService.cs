@@ -6,5 +6,8 @@ public interface IAuthService
 
     Task<bool> LoginAsync(LoginRequest request);
 
+    // Uus: kasutaja registreerimine
+    Task<bool> RegisterAsync(LoginRequest request);
+
     Task LogoutAsync();
 }
