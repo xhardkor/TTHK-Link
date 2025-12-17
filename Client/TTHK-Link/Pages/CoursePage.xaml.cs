@@ -17,7 +17,7 @@ public partial class CoursePage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await Vm.LoadAsync(); // Laeme kursused
+        await Vm.LoadAsync(); // Laeme kursused test push sdasadsadaad
     }
 
     private async void OnCourseSelected(object sender, SelectionChangedEventArgs e)
