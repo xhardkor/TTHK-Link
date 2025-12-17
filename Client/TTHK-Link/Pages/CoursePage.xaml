@@ -4,25 +4,25 @@
     x:Class="TTHK_Link.Pages.CoursePage">
 
     <CollectionView ItemsSource="{Binding Items}"
-                SelectionMode="Single"
-                SelectionChanged="OnCourseSelected">
+                    SelectionMode="Single"
+                    SelectionChanged="OnCourseSelected">
+
         <CollectionView.ItemTemplate>
             <DataTemplate>
-                <Frame Margin="10" Padding="10">
+                <!--: InputTransparent -->
+                <Frame Margin="10"
+                       Padding="10"
+                       InputTransparent="True">
+
                     <VerticalStackLayout Spacing="4">
-                        <!-- Kursuse nimi -->
                         <Label Text="{Binding CourseName}" FontSize="18" />
-
-                        <!-- Rühma ID -->
                         <Label Text="{Binding GroupId}" Opacity="0.7" />
-
-                        <!-- Kirjeldus -->
                         <Label Text="{Binding Description}" Opacity="0.8" />
                     </VerticalStackLayout>
+
                 </Frame>
             </DataTemplate>
         </CollectionView.ItemTemplate>
+
     </CollectionView>
-
-
 </ContentPage>
