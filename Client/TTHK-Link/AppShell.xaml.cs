@@ -7,6 +7,7 @@ public partial class AppShell : Shell
     public AppShell()
     {
         InitializeComponent();
-        Routing.RegisterRoute("chat", typeof(ChatPage));    
+        Routing.RegisterRoute("chat", typeof(ChatPage));
+        Routing.RegisterRoute("register", typeof(RegisterPage));
     }
 }

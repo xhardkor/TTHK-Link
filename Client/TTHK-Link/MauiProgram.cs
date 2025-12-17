@@ -34,11 +34,17 @@ public static class MauiProgram
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<CourseViewModel>();
         builder.Services.AddTransient<ChatViewModel>();
+        builder.Services.AddTransient<RegisterViewModel>();
 
         // pages
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<CoursePage>();
         builder.Services.AddTransient<ChatPage>();
+        builder.Services.AddTransient<RegisterPage>();
+
+        
+        
+
 
         return builder.Build();
     }

@@ -5,12 +5,10 @@ public class FakeAuthService : IAuthService
 {
     public User? CurrentUser { get; private set; }
 
-    // Lihtne "andmebaas" mälus
     private readonly Dictionary<string, (string Password, User User)> _users = new();
 
     public FakeAuthService()
     {
-        // Vaikimisi kasutaja
         var adminUser = new User
         {
             Id = "1",
@@ -20,33 +18,6 @@ public class FakeAuthService : IAuthService
         };
 
         _users["admin"] = ("admin", adminUser);
-    }
-
-    public Task<bool> RegisterAsync(LoginRequest request)
-    {
-        // Kontrollime sisendit
-        if (string.IsNullOrWhiteSpace(request.Username) ||
-            string.IsNullOrWhiteSpace(request.Password))
-        {
-            return Task.FromResult(false);
-        }
-
-        // Kui kasutaja juba olemas, siis ei registreeri
-        if (_users.ContainsKey(request.Username))
-            return Task.FromResult(false);
-
-        var newUser = new User
-        {
-            Id = (_users.Count + 1).ToString(),
-            Login = request.Username,
-            IsAdmin = false,
-            GroupId = "TiTge24"
-        };
-
-        _users[request.Username] = (request.Password, newUser);
-        CurrentUser = newUser;
-
-        return Task.FromResult(true);
     }
 
     public Task<bool> LoginAsync(LoginRequest request)
@@ -62,6 +33,29 @@ public class FakeAuthService : IAuthService
         return Task.FromResult(false);
     }
 
+    public Task<bool> RegisterAsync(RegisterRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Username) ||
+            string.IsNullOrWhiteSpace(request.Password) ||
+            string.IsNullOrWhiteSpace(request.GroupId))
+            return Task.FromResult(false);
+
+        if (_users.ContainsKey(request.Username))
+            return Task.FromResult(false);
+
+        var newUser = new User
+        {
+            Id = (_users.Count + 1).ToString(),
+            Login = request.Username,
+            IsAdmin = false,
+            GroupId = request.GroupId
+        };
+
+        _users[request.Username] = (request.Password, newUser);
+        CurrentUser = newUser;
+
+        return Task.FromResult(true);
+    }
 
     public Task LogoutAsync()
     {
