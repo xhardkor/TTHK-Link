@@ -13,7 +13,7 @@ public partial class LoginViewModel : ObservableObject
     [ObservableProperty] private string password = "";
     [ObservableProperty] private bool isBusy;
 
-    // Veateade kasutajale (näitame lehel)
+    // Veateade kasutajale (näitame lehel11111)
     [ObservableProperty] private string error = "";
 
     public LoginViewModel(IAuthService authService)
