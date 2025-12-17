@@ -3,29 +3,45 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="TTHK_Link.Pages.ChatPage">
 
-    <CollectionView ItemsSource="{Binding Items}">
-        <CollectionView.ItemTemplate>
-            <DataTemplate>
-                <Frame Margin="10" Padding="10">
-                    <VerticalStackLayout Spacing="2">
+    <Grid Padding="10" RowDefinitions="*,Auto" RowSpacing="10">
 
-                        <!-- Saatja nimi -->
-                        <Label Text="{Binding SenderName}"
-                           FontSize="12"
-                           Opacity="0.7" />
+        <CollectionView Grid.Row="0" ItemsSource="{Binding Items}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Margin="10" Padding="10">
+                        <VerticalStackLayout Spacing="2">
 
-                        <!-- Sõnum -->
-                        <Label Text="{Binding Msg}" />
+                            <!-- Saatja nimi -->
+                            <Label Text="{Binding SenderName}"
+                                   FontSize="12"
+                                   Opacity="0.7" />
 
-                        <!-- Aeg -->
-                        <Label Text="{Binding CreatedAt}"
-                           FontSize="12"
-                           Opacity="0.6" />
-                    </VerticalStackLayout>
-                </Frame>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
+                            <!-- Sõnum -->
+                            <Label Text="{Binding Msg}" />
 
+                            <!-- Aeg -->
+                            <Label Text="{Binding CreatedAt}"
+                                   FontSize="12"
+                                   Opacity="0.6" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
+        <!-- Sisestus + nupp -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+            <Entry Grid.Column="0"
+                   Placeholder="Kirjuta sõnum…"
+                   Text="{Binding NewMessageText}"
+                   ReturnType="Send"
+                   ReturnCommand="{Binding SendMessageCommand}" />
+
+            <Button Grid.Column="1"
+                    Text="Saada"
+                    Command="{Binding SendMessageCommand}"
+                    IsEnabled="{Binding CanSendMessage}" />
+        </Grid>
+
+    </Grid>
 </ContentPage>

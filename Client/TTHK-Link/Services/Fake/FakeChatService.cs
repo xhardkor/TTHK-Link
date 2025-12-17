@@ -18,4 +18,20 @@ public class FakeChatService : IChatService
         var list = _all.Where(m => m.CourseId == courseId).ToList();
         return Task.FromResult(list);
     }
+
+    public Task<Message> SendMessageAsync(string courseId, string userId, string msg)
+    {
+        // Loome uue sõnumi ja lisame listi
+        var m = new Message
+        {
+            Id = $"m{_all.Count + 1}",
+            CourseId = courseId,
+            UserId = userId,
+            Msg = msg,
+            CreatedAt = DateTime.Now
+        };
+
+        _all.Add(m);
+        return Task.FromResult(m);
+    }
 }
