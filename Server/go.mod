@@ -1,4 +1,4 @@
-module mylib
+module udlib
 
 go 1.25.0
 
