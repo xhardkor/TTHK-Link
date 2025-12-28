@@ -53,12 +53,17 @@ func main() {
   mux.HandleFunc("POST /auth", func(w http.ResponseWriter, r *http.Request) {
     funclib.PostAuth(w, r, db)
   })
-  // give id and token(-)
+  // give id and token(- / ?)
   mux.HandleFunc("GET /auth", func(w http.ResponseWriter, r *http.Request) {
+    funclib.GetAuth(w, r, db)
   })
-  // give all groups which user has
+  // give all info user has (w/o courses)
   mux.HandleFunc("GET /user/{id}", func(w http.ResponseWriter, r *http.Request) {
     funclib.GetUserInfo(w, r, db)
+  })
+  // give all Courses from a user(id)
+  mux.HandleFunc("GET /courses/{id}", func(w http.ResponseWriter, r *http.Request) {
+    funclib.GetCourses(w, r, db)
   })
   // give all messages from a group(id)
   mux.HandleFunc("GET /group/{id}", func(w http.ResponseWriter, r *http.Request) {

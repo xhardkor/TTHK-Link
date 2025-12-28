@@ -9,16 +9,23 @@ var DB_Dir string = "ignored/db_guard.json"
 
 
 // Global variables
-var Login string = "login"
-var Password string = "password"
-var Groupid string = "groupid"
-var Id string = "id"
+
+const (
+  // for FormValue variable
+  Login = "login"
+  // for FormValue variable
+  Password = "password"
+  // for FormValue variable
+  GroupID = "groupid"
+  // for FormValue variable
+  ID = "id"
+)
 
 
 
+// Structs:
 
-
-// Structs
+// DB config struct
 type DBConfig struct {
   DBUser string `json:"db_user"`
   DBPass string `json:"db_pass"`
@@ -27,21 +34,31 @@ type DBConfig struct {
   DBName string `json:"db_name"`
 }
 
+// User JSON struct
 type UserJSON struct {
   ID        int     `json:"id,omitempty"`
   User      string  `json:"user,omitempty"`
   Password  string  `json:"password,omitempty"`
   IsAdmin   bool    `json:"is_admin,omitempty"`
   GroupID   string  `json:"group_id,omitempty"`
+  Created   string  `json:"created,omitempty"`
 }
 
-
-
-
-
-// Defining user_t table for convinience 
-type user_t struct {
-  ID, Login, Password, IsAdmin, GroupID string
+// Defining user_t table for convinience [private because of low key]
+type user_col struct {
+  ID, Login, Password, IsAdmin, GroupID, Created string
 }
-var User_t = user_t{ID: "ID", Login: "Login", Password: "Password", IsAdmin: "IsAdmin", GroupID: "GroupID"}
+// Defined variables for user_t [public because of high key]
+var UserCols = user_col{ID: "ID", Login: "Login", Password: "Password", IsAdmin: "IsAdmin", GroupID: "GroupID", Created: "Created"}
+// Const variable for User_Table
 const User_Table = "user_t"
+
+
+// Defining course_t table for convinience [private because of low key]
+type course_col struct {
+  ID, GroupID, Desc, CoName string
+}
+// Defined variables for course_t [public because of high key]
+var CourseCols = course_col{ID: "ID", GroupID: "GroupID", Desc: "Description", CoName: "CourseName"}
+// Const variable for User_Table
+const Course_Table = "course_t"
