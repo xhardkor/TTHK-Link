@@ -55,24 +55,25 @@ func main() {
   })
   // give id and token(- / ?)
   mux.HandleFunc("GET /auth", func(w http.ResponseWriter, r *http.Request) {
-    funclib.GetAuth(w, r, db)
+    funclib.GetAuth(w, r, db) // NEXT
   })
   // give all info user has (w/o courses)
-  mux.HandleFunc("GET /user/{id}", func(w http.ResponseWriter, r *http.Request) {
+  mux.HandleFunc("GET /user/{token}", func(w http.ResponseWriter, r *http.Request) {
     funclib.GetUserInfo(w, r, db)
   })
   // give all Courses from a user(id)
-  mux.HandleFunc("GET /courses/{id}", func(w http.ResponseWriter, r *http.Request) {
+  mux.HandleFunc("GET /courses/{token}", func(w http.ResponseWriter, r *http.Request) {
     funclib.GetCourses(w, r, db)
   })
-  // give all messages from a group(id)
-  mux.HandleFunc("GET /group/{id}", func(w http.ResponseWriter, r *http.Request) {
-  })
-  // create a new group
-  mux.HandleFunc("POST /group", func(w http.ResponseWriter, r *http.Request) {
+  // give all messages of Group Course
+  mux.HandleFunc("GET /messages/{group_id}/{course_id}", func(w http.ResponseWriter, r *http.Request) {
+    funclib.GetCourseMessages(w, r, db)
   })
   // write a message 
   mux.HandleFunc("POST /message/{id}", func(w http.ResponseWriter, r *http.Request) {
+  })
+  // create a new group
+  mux.HandleFunc("POST /group", func(w http.ResponseWriter, r *http.Request) {
   })
 
 
