@@ -6,51 +6,60 @@ using TTHK_Link.Services.Interfaces;
 
 namespace TTHK_Link.ViewModels;
 
-// Võtame courseId Shell query'st: chat?courseId=...
-[QueryProperty(nameof(CourseId), "courseId")]
+// Берём courseId из Shell-навигации: chat?courseId=...
+// ReSharper disable once UnusedMember.Global
+[QueryProperty(nameof(CourseId), queryId: "courseId")]
 public partial class ChatViewModel : ObservableObject
 {
     private readonly IChatService _chat;
     private readonly IAuthService _auth;
     private readonly IUserService _users;
 
+    // Список сообщений для UI
     public ObservableCollection<Message> Items { get; } = new();
 
-    [ObservableProperty] private string courseId = "";
+    // courseId из навигации
+    // ReSharper disable once UnusedMember.Local
+    [ObservableProperty]
+    private string courseId = "";
 
-    // Uus: sisestatav sõnum
-    [ObservableProperty] private string newMessageText = "";
+    // Текст вводимого сообщения
+    // ReSharper disable once UnusedMember.Local
+    [ObservableProperty]
+    private string newMessageText = "";
 
-    // Uus: nupu aktiivsuse kontroll UI jaoks
+    // Можно ли отправлять сообщение (UX)
     public bool CanSendMessage =>
         !string.IsNullOrWhiteSpace(NewMessageText) &&
         !string.IsNullOrWhiteSpace(CourseId) &&
         _auth.CurrentUser != null;
 
-    public ChatViewModel(IChatService chat, IAuthService auth, IUserService users)
+    public ChatViewModel(
+        IChatService chat,
+        IAuthService auth,
+        IUserService users)
     {
         _chat = chat;
         _auth = auth;
         _users = users;
     }
 
+    // Когда меняется courseId — загружаем сообщения
     partial void OnCourseIdChanged(string value)
     {
-        // Kui courseId muutub, laeme sõnumid uuesti
         _ = LoadAsync();
-
-        // Uuendame ka nupu staatust
         OnPropertyChanged(nameof(CanSendMessage));
         SendMessageCommand.NotifyCanExecuteChanged();
     }
 
+    // Когда меняется текст — обновляем состояние кнопки
     partial void OnNewMessageTextChanged(string value)
     {
-        // Kui tekst muutub, uuendame nupu aktiivsust
         OnPropertyChanged(nameof(CanSendMessage));
         SendMessageCommand.NotifyCanExecuteChanged();
     }
 
+    // Загрузка сообщений
     [RelayCommand]
     public async Task LoadAsync()
     {
@@ -63,15 +72,11 @@ public partial class ChatViewModel : ObservableObject
         var allUsers = await _users.GetAllAsync();
         var dict = allUsers.ToDictionary(u => u.Id, u => u.Login);
 
-        // Laeme ainult selle kursuse sõnumid
         var list = await _chat.GetMessagesAsync(CourseId);
 
         foreach (var m in list)
         {
-            // UI helper: kas see sõnum on minu oma
-            m.IsMine = (m.UserId == me.Id);
-
-            // UI jaoks: saatja nimi
+            m.IsMine = m.UserId == me.Id;
             m.SenderName = dict.TryGetValue(m.UserId, out var name)
                 ? name
                 : "unknown";
@@ -80,33 +85,30 @@ public partial class ChatViewModel : ObservableObject
         }
     }
 
-    // Uus: sõnumi saatmine
+    // Отправка сообщения
     [RelayCommand(CanExecute = nameof(CanSendMessage))]
     public async Task SendMessageAsync()
     {
         var me = _auth.CurrentUser;
-        if (me == null) return;
-        if (string.IsNullOrWhiteSpace(CourseId)) return;
+        if (me == null || string.IsNullOrWhiteSpace(CourseId))
+            return;
 
         var text = NewMessageText.Trim();
-        if (text.Length == 0) return;
+        if (text.Length == 0)
+            return;
 
-        // Tühjendame sisestuse kohe (UI tundub kiirem)
+        // Очищаем поле сразу (UX)
         NewMessageText = "";
 
-        // NB! Siin sõltub signatuur sinu IChatService'ist.
-        // Kui sul on juba SendMessageAsync, kasuta seda.
-        // Kui veel pole, siis lisame selle järgmise sammuna.
         try
         {
-            // Oletus: teenus tagastab loodud Message
             var sent = await _chat.SendMessageAsync(
                 CourseId,
                 me.Id.ToString(),
                 text
             );
 
-            // Kui teenus tagastab null või sul pole veel serverit, teeme lokaalse lisamise
+            // Если сервер не вернул сообщение — создаём локально
             if (sent == null)
             {
                 sent = new Message
@@ -124,12 +126,12 @@ public partial class ChatViewModel : ObservableObject
         }
         catch
         {
-            // Kui saatmine ebaõnnestub, paneme teksti tagasi (et kasutaja ei kaotaks seda)
+            // Возвращаем текст, если отправка не удалась
             NewMessageText = text;
 
             await Application.Current!.MainPage!.DisplayAlert(
-                "Viga",
-                "Sõnumi saatmine ebaõnnestus.",
+                "Ошибка",
+                "Не удалось отправить сообщение.",
                 "OK");
         }
     }
