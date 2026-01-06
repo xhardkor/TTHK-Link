@@ -39,7 +39,8 @@ public static class MauiProgram
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<CoursePage>();
         builder.Services.AddTransient<ChatPage>();
-
+        builder.Services.AddSingleton<FlyoutViewModel>();
+        builder.Services.AddSingleton<AppShell>();
         return builder.Build();
     }
 }

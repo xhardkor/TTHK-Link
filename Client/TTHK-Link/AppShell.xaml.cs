@@ -1,14 +1,26 @@
-﻿using TTHK_Link.Pages;
+﻿using TTHK_Link.ViewModels;
 
 namespace TTHK_Link;
 
 public partial class AppShell : Shell
 {
-    public AppShell()
+    private readonly FlyoutViewModel _vm;
+    private readonly IAuthService _auth;
+
+    public AppShell(FlyoutViewModel vm, IAuthService auth)
     {
         InitializeComponent();
-        Routing.RegisterRoute("Login", typeof(LoginPage));
-        Routing.RegisterRoute("Course", typeof(CoursePage));
-        Routing.RegisterRoute("Chat", typeof(ChatPage));
+        BindingContext = _vm = vm;
+        _auth = auth;
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        _vm.RefreshProfile();
+
+        if (_auth.CurrentUser == null)
+            await GoToAsync("//login");
     }
 }
