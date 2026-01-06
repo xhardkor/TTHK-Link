@@ -141,6 +141,10 @@
                   FlyoutItemIsVisible="False"
                   ContentTemplate="{DataTemplate pages:LoginPage}"/>
     
+    <FlyoutItem Title="О приложении" Route="about">
+        <ShellContent ContentTemplate="{DataTemplate pages:AboutPage}" />
+    </FlyoutItem>
+    
 </Shell>
                   
-                  
+       

@@ -1,9 +1,48 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="TTHK_Link.Pages.AboutPage">
-    <ContentPage.Content>
-        
-    </ContentPage.Content>
+             x:Class="TTHK_Link.Pages.AboutPage"
+             Title="О приложении">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="18">
+
+            <Image Source="logo.png"
+                   HeightRequest="120"
+                   WidthRequest="120"
+                   Aspect="AspectFit"
+                   HorizontalOptions="Center" />
+
+            <Label Text="TTHK-Link"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <Label Text="Приложение для общения и работы в группах."
+                   FontSize="14"
+                   Opacity="0.8"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center" />
+
+            <Frame CornerRadius="18" Padding="16" HasShadow="False">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Версия" FontAttributes="Bold" />
+                    <Label Text="1.0.0" Opacity="0.8" />
+
+                    <BoxView HeightRequest="1" Opacity="0.15"/>
+
+                    <Label Text="Контакты" FontAttributes="Bold" />
+                    <Label Text="support@tthk-link.app" Opacity="0.8" />
+
+                    <BoxView HeightRequest="1" Opacity="0.15"/>
+
+                    <Label Text="Описание" FontAttributes="Bold" />
+                    <Label Text="Чаты, материалы и обсуждения в одном месте."
+                           Opacity="0.8" />
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
 </ContentPage>
