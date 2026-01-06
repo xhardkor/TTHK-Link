@@ -4,47 +4,49 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:TTHK_Link.Pages"
-    xmlns:local="clr-namespace:TTHK_Link"
-    Title="TTHK_Link">
+    Title="TTHK_Link"
+    FlyoutBehavior="Flyout"
+    FlyoutBackgroundColor="#0F1B2D">
 
-    <ShellContent
-        Route="login"
-        ContentTemplate="{DataTemplate pages:LoginPage}" />
+    <!-- Профиль сверху (как в Telegram) -->
+    <Shell.FlyoutHeader>
+        <Grid Padding="18" ColumnDefinitions="Auto,*" ColumnSpacing="14">
+            <Frame WidthRequest="56" HeightRequest="56"
+                   CornerRadius="28"
+                   HasShadow="False"
+                   BackgroundColor="#1E2A3D"
+                   Padding="0">
+                <Label Text="{Binding ProfileInitials}"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"/>
+            </Frame>
 
-    <ShellContent
-        Route="groups"
-        ContentTemplate="{DataTemplate pages:CoursePage}" />
+            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                <Label Text="{Binding FullName}"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="White"/>
+                <Label Text="{Binding GroupName}"
+                       FontSize="13"
+                       Opacity="0.8"
+                       TextColor="White"/>
+            </VerticalStackLayout>
+        </Grid>
+    </Shell.FlyoutHeader>
 
-    <ShellContent
-        Route="chat"
-        ContentTemplate="{DataTemplate pages:ChatPage}" />
+    <!-- Экраны в меню -->
+    <FlyoutItem Title="Группы" Route="groups">
+        <ShellContent ContentTemplate="{DataTemplate pages:CoursePage}" />
+    </FlyoutItem>
 
-    <ContentPage
-        xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-        x:Class="TTHK_Link.Pages.CoursePage">
+    <FlyoutItem Title="Чат" Route="chat">
+        <ShellContent ContentTemplate="{DataTemplate pages:ChatPage}" />
+    </FlyoutItem>
 
-        <CollectionView
-            ItemsSource="{Binding Items}"
-            SelectionMode="Single"
-            SelectionChanged="OnCourseSelected">
+    <!-- Логин НЕ добавляем в меню, оставляем только как маршрут -->
+    <ShellContent Route="login" ContentTemplate="{DataTemplate pages:LoginPage}" />
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame Margin="10"
-                           Padding="10"
-                           InputTransparent="True">
-
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="{Binding CourseName}" FontSize="18" />
-                            <Label Text="{Binding GroupId}" Opacity="0.7" />
-                            <Label Text="{Binding Description}" Opacity="0.8" />
-                        </VerticalStackLayout>
-
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-
-        </CollectionView>
-    </ContentPage>
 </Shell>
