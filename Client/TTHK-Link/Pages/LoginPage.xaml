@@ -1,20 +1,107 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:vm="clr-namespace:TTHK_Link.ViewModels"
-    x:Class="TTHK_Link.Pages.LoginPage">
+    x:Class="TTHK_Link.Pages.LoginPage"
+    BackgroundColor="#0F1B2D">
 
-    <VerticalStackLayout Padding="20" Spacing="12">
+    <Grid>
+        <!-- Фон-градиент -->
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0,1">
+                <GradientStop Color="#0F1B2D" Offset="0.0" />
+                <GradientStop Color="#152A46" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
 
-        <Entry Placeholder="Username" Text="{Binding Username}" />
-        <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}" />
+        <!-- Скролл, чтобы клавиатура не ломала верстку -->
+        <ScrollView>
+            <Grid Padding="24" RowDefinitions="Auto,*" VerticalOptions="Fill">
+                <!-- Заголовок -->
+                <VerticalStackLayout Grid.Row="0" Spacing="6" Margin="0,24,0,18">
+                    <Label Text="TTHK-Link"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="White" />
+                    <Label Text="Logi sisse, et jätkata"
+                           FontSize="14"
+                           TextColor="#C9D4E5"
+                           Opacity="0.9"/>
+                </VerticalStackLayout>
 
-        <!-- Veateade kasutajale -->
-        <Label Text="{Binding Error}" TextColor="Red" />
+                <!-- Карточка -->
+                <Frame Grid.Row="1"
+                       BackgroundColor="#1C2F4A"
+                       BorderColor="#2B466A"
+                       CornerRadius="24"
+                       HasShadow="False"
+                       Padding="18"
+                       VerticalOptions="Start">
 
-        <Button Text="Login" Command="{Binding LoginCommand}" />
+                    <VerticalStackLayout Spacing="14">
+                        <!-- Username -->
+                        <Label Text="Username"
+                               FontSize="12"
+                               TextColor="#C9D4E5"
+                               Opacity="0.9" />
+                        <Border Stroke="#35597F"
+                                StrokeThickness="1"
+                                BackgroundColor="#14263F"
+                                StrokeShape="RoundRectangle 14"
+                                Padding="12,8">
+                            <Entry Placeholder="Enter username"
+                                   PlaceholderColor="#7F96B5"
+                                   TextColor="White"
+                                   Text="{Binding Username}"
+                                   ReturnType="Next" />
+                        </Border>
 
+                        <!-- Password -->
+                        <Label Text="Password"
+                               FontSize="12"
+                               TextColor="#C9D4E5"
+                               Opacity="0.9"
+                               Margin="0,6,0,0"/>
+                        <Border Stroke="#35597F"
+                                StrokeThickness="1"
+                                BackgroundColor="#14263F"
+                                StrokeShape="RoundRectangle 14"
+                                Padding="12,8">
+                            <Entry Placeholder="Enter password"
+                                   PlaceholderColor="#7F96B5"
+                                   TextColor="White"
+                                   IsPassword="True"
+                                   Text="{Binding Password}"
+                                   ReturnType="Done" />
+                        </Border>
 
+                        <!-- Ошибка (если есть) -->
+                        <Label Text="{Binding ErrorText}"
+                               IsVisible="{Binding HasError}"
+                               TextColor="#FFB4B4"
+                               FontSize="12"
+                               Margin="0,4,0,0"/>
 
-    </VerticalStackLayout>
+                        <!-- Login button -->
+                        <Button Text="Login"
+                                CornerRadius="16"
+                                HeightRequest="52"
+                                FontAttributes="Bold"
+                                BackgroundColor="#5A36F0"
+                                TextColor="White"
+                                Command="{Binding LoginCommand}"
+                                IsEnabled="{Binding CanLogin}"
+                                Margin="0,10,0,0"/>
+
+                        <!-- Низ -->
+                        <Label Text="If you don’t have access, contact admin."
+                               FontSize="12"
+                               TextColor="#C9D4E5"
+                               HorizontalTextAlignment="Center"
+                               Opacity="0.75"
+                               Margin="0,6,0,0"/>
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+        </ScrollView>
+    </Grid>
 </ContentPage>

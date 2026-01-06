@@ -11,6 +11,7 @@
             <converters:BoolToTextColorConverter x:Key="BoolToTextColorConverter" />
             <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
             <converters:BoolToTimeColorConverter x:Key="BoolToTimeColorConverter" />
+            <converters:StringNotEmptyToBoolConverter x:Key="StringNotEmptyToBoolConverter" />\
             
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />

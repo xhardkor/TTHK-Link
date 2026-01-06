@@ -126,13 +126,21 @@
     </Shell.FlyoutContent>
 
     <!-- ====== РОУТЫ (экраны) ====== -->
+    <!-- ====== РОУТЫ (экраны) ====== -->
     <FlyoutItem Title="Группы" Route="groups" FlyoutItemIsVisible="False">
-        <ShellContent ContentTemplate="{DataTemplate pages:CoursePage}" />
+        <ShellContent Route="groups"
+                      ContentTemplate="{DataTemplate pages:CoursePage}" />
     </FlyoutItem>
 
     <FlyoutItem Title="Чат" Route="chat" FlyoutItemIsVisible="False">
-        <ShellContent ContentTemplate="{DataTemplate pages:ChatPage}" />
+        <ShellContent Route="chat"
+                      ContentTemplate="{DataTemplate pages:ChatPage}" />
     </FlyoutItem>
 
-    <ShellContent Route="login" FlyoutItemIsVisible="False" ContentTemplate="{DataTemplate pages:LoginPage}" />
+    <ShellContent Route="login"
+                  FlyoutItemIsVisible="False"
+                  ContentTemplate="{DataTemplate pages:LoginPage}"/>
+    
 </Shell>
+                  
+                  
