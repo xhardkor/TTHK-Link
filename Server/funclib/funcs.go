@@ -1,7 +1,6 @@
 package funclib
 
 import (
-	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -15,6 +14,7 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 )
+
 
 // AUTH POST; It is used for accepting HTTP POST Method [creating new account]
 func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
@@ -48,8 +48,13 @@ func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
     return
   }
 
-  // Cheking if username already exists
+
   // NEXT
+  // Cheking if username already exists
+
+
+  // Hash for password
+  hash := CreateHashPsw(password)
 
 
   // DB Insert [using Prepare]
@@ -58,21 +63,17 @@ func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
   stmt, err := db.Prepare(querry)
   if err != nil {
-    log.Printf("PostAuth: DB Prep | Error ==> %s\n", err)
+    log.Printf("| PostAuth: DB Prep | Error ==> %s\n", err)
     return
   }
-  defer fmt.Println("PostAuth: DB Prepare | Closed")
+  defer fmt.Println("| PostAuth: DB Prepare | Closed")
   defer stmt.Close()
 
-  // Hash for password
-  h := sha256.New()
-  h.Write([]byte(password))
-  hash := h.Sum(nil)
 
   // Writing into DB
   res, err := stmt.Exec(username, hash, group, time.Now())
   if err != nil {
-    log.Printf("PostAuth: Exec | Some Issues ==> %s\n", err)
+    log.Printf("| PostAuth: Exec | Some Issues ==> %s\n", err)
     return
   }
   if res == nil {
@@ -80,24 +81,17 @@ func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
     w.Write([]byte("That Login already exists!"))
     return
   }
-  w.WriteHeader(http.StatusAccepted)
-  w.Write([]byte("OK!")) // delete at some point
 
-}
-
-//// IN THE FUTURE
-// GET AUTH; Generates token for current session
-func GetAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-  defer fmt.Println("GetAuth: Request Body Closed")
-  defer r.Body.Close()
-
-  // Login and Password
-  userid := r.PathValue(data.ID)
-  if userid == "" {
-    http.Error(w, "NULL ID", http.StatusBadRequest)
+  // Automatically gives Token 
+  token, err := GetToken(username, hash)
+  tmp := struct{ Token []byte `json:"token"`}{Token: token}
+  marsh, err := json.Marshal(tmp)
+  if err != nil {
+    log.Printf("| PostAuth: JSON Marshal | Error ==> %s", err)
     return
   }
-
+  w.WriteHeader(http.StatusAccepted)
+  w.Write(marsh)
 
 }
 
@@ -108,16 +102,20 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   defer fmt.Println("GetUserInfo: Request Body Closed")
   defer r.Body.Close()
 
-  userid := r.FormValue(data.Token)
+  token := r.FormValue(data.Token)
+  // Token check 
+  if token == "" {
+    //getToken(w, r.FormValue(data.Login))
+  }
 
   // Making querry from "Template" [using Query]
   cols := data.UserCols
   querry := fmt.Sprintf("SELECT %s, %s, %s FROM %s WHERE ID=?",
   cols.Login, cols.GroupID, cols.Created, data.User_Table)
 
-  rows, err := db.Query(querry, userid)
+  rows, err := db.Query(querry, token)
   if err != nil {
-    log.Printf("GetUserInfo: DB Query | Error ==> %s\n", err)
+    log.Printf("| GetUserInfo: DB Query | Error ==> %s\n", err)
     return
   }
   defer fmt.Println("GetUserInfo: DB Query | Closed")
@@ -128,18 +126,17 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   var us data.UserJSON
   for rows.Next() {
     if err = rows.Scan(&us.User, &us.GroupID, &us.Created); err != nil {
-      log.Printf("GetUserInfo: JSON Prep | Error ==> %s\n", err)
+      log.Printf("| GetUserInfo: JSON Prep | Error ==> %s\n", err)
       return
     }
   }
 
   marsh, err := json.Marshal(us)
   if err != nil {
-    log.Printf("GetUserInfo: JSON Marshal | Error ==> %s\n", err)
+    log.Printf("| GetUserInfo: JSON Marshal | Error ==> %s\n", err)
     return
   }
   w.Write(marsh)
-  fmt.Println("JSON was sent")
 
 }
 
@@ -155,14 +152,14 @@ func GetCourses(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   u_cols := data.UserCols
 
   querry := fmt.Sprintf(`
-  SELECT c.%s FROM %s AS c 
-  INNER JOIN %s AS u ON c.%s=u.%s AND u.%s=?
+    SELECT c.%s FROM %s AS c 
+    INNER JOIN %s AS u ON c.%s=u.%s AND u.%s=?
   `,
   c_cols.CoName, data.Course_Table, data.User_Table, c_cols.GroupID, u_cols.GroupID, u_cols.ID)
 
   row, err := db.Query(querry, userid)
   if err != nil {
-    log.Printf("GetCourses: DB Querry | Error ==> %s\n", err)
+    log.Printf("| GetCourses: DB Querry | Error ==> %s\n", err)
     return 
   }
   defer fmt.Println("GetCourses Row Closed")
@@ -174,7 +171,7 @@ func GetCourses(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   for row.Next() {
     var course data.CourseJSON
     if err := row.Scan(&course.CourseName); err != nil {
-      log.Printf("GetCourses: JSON Prep | Error ==> %s\n", err)
+      log.Printf("| GetCourses: JSON Prep | Error ==> %s\n", err)
       return
     }
     courses = append(courses, course)
@@ -182,7 +179,7 @@ func GetCourses(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
   marsh, err := json.Marshal(courses)
   if err != nil {
-    log.Printf("GetCourses: JSON Marshal | Error ==> %s\n", err)
+    log.Printf("| GetCourses: JSON Marshal | Error ==> %s\n", err)
     return
   }
   w.Write(marsh)
@@ -196,8 +193,7 @@ func GetCourseMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
   group_id := r.PathValue(data.GroupID)
   course_id := r.PathValue(data.CourseID)
-  req := ParseRequest(r)
-  fmt.Println(req.Token)
+
   // TOKEN CHECKER => FUTURE
   //user_token := r.FormValue(data.Token)
 
@@ -218,7 +214,7 @@ func GetCourseMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
   row, err := db.Query(querry, group_id, course_id)
   if err != nil {
-    log.Printf("GetCourseMessages: DB Querry | Error ==> %s\n", err)
+    log.Printf("| GetCourseMessages: DB Querry | Error ==> %s\n", err)
     return
   }
   defer fmt.Println("GetCourseMessages Row Closed")
@@ -229,15 +225,14 @@ func GetCourseMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   for row.Next() {
     var msg data.MessageJSON
     if err := row.Scan(&msg.UserID, &msg.Msg, &msg.Created, &msg.ID); err != nil {
-      log.Printf("GetCourseMessages: JSON Prep | Error ==> %s\n", err)
+      log.Printf("| GetCourseMessages: JSON Prep | Error ==> %s\n", err)
       return
     }
     msgs = append(msgs, msg)
   }
-
   marsh, err := json.Marshal(msgs)
   if err != nil {
-    log.Printf("GetCourseMessages: JSON Marshal | Error ==> %s\n", err)
+    log.Printf("| GetCourseMessages: JSON Marshal | Error ==> %s\n", err)
     return
   }
   w.Write(marsh)
@@ -274,7 +269,7 @@ func EditMessage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
   rows, err := db.Query(querry, msg, group, course, token)
   if err != nil {
-    log.Printf("EditMessage: DB Query | Error ==> %s", err)
+    log.Printf("| EditMessage: DB Query | Error ==> %s", err)
     return
   }
   defer fmt.Println("EditMessage Row Closed")
