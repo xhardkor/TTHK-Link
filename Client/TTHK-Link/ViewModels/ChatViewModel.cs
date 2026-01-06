@@ -129,10 +129,7 @@ public partial class ChatViewModel : ObservableObject
             // Возвращаем текст, если отправка не удалась
             NewMessageText = text;
 
-            await Application.Current!.MainPage!.DisplayAlert(
-                "Ошибка",
-                "Не удалось отправить сообщение.",
-                "OK");
+            await Shell.Current.DisplayAlert("Ошибка", "Не удалось отправить сообщение.", "OK");
         }
     }
 }

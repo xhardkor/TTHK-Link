@@ -39,17 +39,22 @@
         </CollectionView>
 
         <!-- Sisestus + nupp -->
-        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="10">
-            <Entry Grid.Column="0"
-                   Placeholder="Kirjuta sõnum…"
-                   Text="{Binding NewMessageText}"
-                   ReturnType="Send"
-                   ReturnCommand="{Binding SendMessageCommand}" />
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="6">
 
-            <Button Grid.Column="1"
-                    Text="Saada"
-                    Command="{Binding SendMessageCommand}"
-                    IsEnabled="{Binding CanSendMessage}" />
+            <ImageButton Grid.Column="0"
+                         Source="attach.png"
+                         BackgroundColor="Transparent"
+                         Command="{Binding PickFileCommand}" />
+
+            <Entry Grid.Column="1"
+                   Placeholder="Kirjuta sõnum…"
+                   Text="{Binding NewMessageText}" />
+
+            <ImageButton Grid.Column="2"
+                         Source="send.png"
+                         BackgroundColor="Transparent"
+                         Command="{Binding SendMessageCommand}"
+                         IsEnabled="{Binding CanSendMessage}" />
         </Grid>
 
     </Grid>

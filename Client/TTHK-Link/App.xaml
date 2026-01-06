@@ -2,9 +2,16 @@
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:TTHK_Link"
+             xmlns:converters="clr-namespace:TTHK_Link.Converters"
              x:Class="TTHK_Link.App">
     <Application.Resources>
         <ResourceDictionary>
+            <converters:BoolToAlignmentConverter x:Key="BoolToAlignmentConverter" />
+            <converters:BoolToBubbleColorConverter x:Key="BoolToBubbleColorConverter" />
+            <converters:BoolToTextColorConverter x:Key="BoolToTextColorConverter" />
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+            <converters:BoolToTimeColorConverter x:Key="BoolToTimeColorConverter" />
+            
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
