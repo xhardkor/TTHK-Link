@@ -5,57 +5,78 @@
 
     <Grid Padding="10" RowDefinitions="*,Auto" RowSpacing="10">
 
-        <CollectionView Grid.Row="0" ItemsSource="{Binding Items}" Margin="0,0,0,10">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Padding="6">
-                        <Frame Padding="10"
-                               CornerRadius="18"
-                               HasShadow="False"
-                               MaximumWidthRequest="280"
-                               HorizontalOptions="{Binding IsMine, Converter={StaticResource BoolToAlignmentConverter}}"
-                               BackgroundColor="{Binding IsMine, Converter={StaticResource BoolToBubbleColorConverter}}">
-                            <VerticalStackLayout Spacing="4">
-                                <!-- Имя показываем только если НЕ моё -->
-                                <Label Text="{Binding SenderName}"
-                                       FontSize="12"
-                                       Opacity="0.7"
-                                       IsVisible="{Binding IsMine, Converter={StaticResource InverseBoolConverter}}" />
+      <CollectionView Grid.Row="0"
+                ItemsSource="{Binding Items}"
+                Margin="0,0,0,10">
+    <CollectionView.ItemTemplate>
+        <DataTemplate>
+            <Grid Padding="6">
+                <Frame Padding="10"
+                       CornerRadius="18"
+                       HasShadow="False"
+                       MaximumWidthRequest="280"
+                       HorizontalOptions="Start"
+                       BackgroundColor="#E9E9EB">
 
-                                <Label Text="{Binding Msg}"
-                                       FontSize="15"
-                                       TextColor="{Binding IsMine, Converter={StaticResource BoolToTextColorConverter}}"/>
+                    <Frame.Triggers>
+                        <DataTrigger TargetType="Frame"
+                                     Binding="{Binding IsMine}"
+                                     Value="True">
+                            <Setter Property="HorizontalOptions" Value="End" />
+                            <Setter Property="BackgroundColor" Value="#2A7FFF" />
+                        </DataTrigger>
+                    </Frame.Triggers>
 
-                                <Label Text="{Binding CreatedAt, StringFormat='{0:HH:mm}'}"
-                                       FontSize="10"
-                                       Opacity="0.6"
-                                       HorizontalOptions="End"
-                                       TextColor="{Binding IsMine, Converter={StaticResource BoolToTimeColorConverter}}"/>
-                            </VerticalStackLayout>
-                        </Frame>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                    <VerticalStackLayout Spacing="4">
+                        <!-- Имя показываем только если НЕ моё -->
+                        <Label Text="{Binding SenderName}"
+                               FontSize="12"
+                               Opacity="0.7"
+                               IsVisible="True">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label"
+                                             Binding="{Binding IsMine}"
+                                             Value="True">
+                                    <Setter Property="IsVisible" Value="False" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
 
-        <!-- Sisestus + nupp -->
-        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="6">
+                        <Label Text="{Binding Msg}"
+                               FontSize="15"
+                               TextColor="Black">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label"
+                                             Binding="{Binding IsMine}"
+                                             Value="True">
+                                    <Setter Property="TextColor" Value="White" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
 
-            <ImageButton Grid.Column="0"
-                         Source="attach.png"
-                         BackgroundColor="Transparent"
-                         Command="{Binding PickFileCommand}" />
+                        <Label Text="{Binding CreatedAt, StringFormat='{0:HH:mm}'}"
+                               FontSize="10"
+                               Opacity="0.6"
+                               HorizontalOptions="End"
+                               TextColor="Gray" />
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+        </DataTemplate>
+    </CollectionView.ItemTemplate>
+</CollectionView>
+        
+    <!-- Sisestus + nupp -->
+    <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="6">
+        <Button Text="＋" WidthRequest="40" HeightRequest="40" CornerRadius="20"/>
 
-            <Entry Grid.Column="1"
-                   Placeholder="Kirjuta sõnum…"
-                   Text="{Binding NewMessageText}" />
+        <Frame Grid.Column="1" Padding="10,6" CornerRadius="18" HasShadow="False" BackgroundColor="#F2F3F5">
+            <Entry Placeholder="Сообщение..." BackgroundColor="Transparent"/>
+        </Frame>
 
-            <ImageButton Grid.Column="2"
-                         Source="send.png"
-                         BackgroundColor="Transparent"
-                         Command="{Binding SendMessageCommand}"
-                         IsEnabled="{Binding CanSendMessage}" />
-        </Grid>
-
+        <Button Grid.Column="2" Text="➤" WidthRequest="40" HeightRequest="40" CornerRadius="20"
+                BackgroundColor="#2A7FFF" TextColor="White"/>
     </Grid>
+
+</Grid>
 </ContentPage>
