@@ -4,49 +4,105 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:TTHK_Link.Pages"
-    Title="TTHK_Link"
+    xmlns:conv="clr-namespace:TTHK_Link.Converters"
     FlyoutBehavior="Flyout"
-    FlyoutBackgroundColor="#0F1B2D">
+    FlyoutBackgroundColor="#0F1B2D"
+    BackgroundColor="#0B1424"
+    Shell.NavBarHasShadow="False"
+    Shell.ForegroundColor="White"
+    Shell.TitleColor="White">
 
-    <!-- Профиль сверху (как в Telegram) -->
+    <Shell.Resources>
+        <ResourceDictionary>
+            <conv:StringNotEmptyToBoolConverter x:Key="StringNotEmptyToBoolConverter"/>
+
+            <!-- стиль текста в меню -->
+            <Style x:Key="FlyoutTitleLabel" TargetType="Label">
+                <Setter Property="TextColor" Value="White"/>
+                <Setter Property="FontSize" Value="16"/>
+            </Style>
+
+            <Style x:Key="FlyoutRowGrid" TargetType="Grid">
+                <Setter Property="Padding" Value="14,10"/>
+                <Setter Property="ColumnSpacing" Value="12"/>
+            </Style>
+        </ResourceDictionary>
+    </Shell.Resources>
+
+    <!-- ===== HEADER (как Telegram) ===== -->
     <Shell.FlyoutHeader>
-        <Grid Padding="18" ColumnDefinitions="Auto,*" ColumnSpacing="14">
-            <Frame WidthRequest="56" HeightRequest="56"
-                   CornerRadius="28"
-                   HasShadow="False"
-                   BackgroundColor="#1E2A3D"
-                   Padding="0">
-                <Label Text="{Binding ProfileInitials}"
-                       FontSize="18"
-                       FontAttributes="Bold"
-                       TextColor="White"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"/>
-            </Frame>
+        <Grid Padding="18" RowDefinitions="Auto,Auto" BackgroundColor="#0B1424">
 
-            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                <Label Text="{Binding FullName}"
-                       FontSize="16"
-                       FontAttributes="Bold"
-                       TextColor="White"/>
-                <Label Text="{Binding GroupName}"
-                       FontSize="13"
-                       Opacity="0.8"
-                       TextColor="White"/>
-            </VerticalStackLayout>
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                <!-- Аватар -->
+                <Frame WidthRequest="56" HeightRequest="56"
+                       CornerRadius="28"
+                       HasShadow="False"
+                       BackgroundColor="#1E2A3D"
+                       Padding="0">
+
+                    <Grid>
+                        <Image Source="{Binding AvatarUrl}"
+                               Aspect="AspectFill"
+                               IsVisible="{Binding AvatarUrl, Converter={StaticResource StringNotEmptyToBoolConverter}}"/>
+
+                        <Label Text="{Binding ProfileInitials}"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label"
+                                             Binding="{Binding AvatarUrl, Converter={StaticResource StringNotEmptyToBoolConverter}}"
+                                             Value="True">
+                                    <Setter Property="IsVisible" Value="False" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </Grid>
+
+                </Frame>
+
+                <!-- Имя + группа -->
+                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                    <Label Text="{Binding FullName}"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="White"/>
+                    <Label Text="{Binding GroupName}"
+                           FontSize="13"
+                           TextColor="#9FB0C8"/>
+                </VerticalStackLayout>
+            </Grid>
+
+            <BoxView Grid.Row="1" HeightRequest="1" Margin="0,14,0,0" Color="#1E2A3D"/>
         </Grid>
     </Shell.FlyoutHeader>
 
-    <!-- Экраны в меню -->
-    <FlyoutItem Title="Группы" Route="groups">
-        <ShellContent ContentTemplate="{DataTemplate pages:CoursePage}" />
+    <!-- ===== ШАБЛОН СТРОКИ МЕНЮ (иконка + текст + стрелка) ===== -->
+    <Shell.ItemTemplate>
+        <DataTemplate>
+            <Grid Style="{StaticResource FlyoutRowGrid}" ColumnDefinitions="24,*,Auto" BackgroundColor="Transparent">
+                <Image Source="{Binding FlyoutIcon}" WidthRequest="22" HeightRequest="22" Opacity="0.95"/>
+                <Label Grid.Column="1" Text="{Binding Title}" Style="{StaticResource FlyoutTitleLabel}" />
+                <Label Grid.Column="2" Text="›" TextColor="#6F86A5" FontSize="20" VerticalTextAlignment="Center"/>
+            </Grid>
+        </DataTemplate>
+    </Shell.ItemTemplate>
+
+    <!-- ===== ПУНКТЫ МЕНЮ ===== -->
+    <FlyoutItem Title="Группы" Route="groups" FlyoutIcon="ic_groups.png">
+        <ShellContent Route="groupsPage" ContentTemplate="{DataTemplate pages:CoursePage}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Чат" Route="chat">
-        <ShellContent ContentTemplate="{DataTemplate pages:ChatPage}" />
+    <FlyoutItem Title="Чат" Route="chat" FlyoutIcon="ic_chat.png">
+        <ShellContent Route="chatPage" ContentTemplate="{DataTemplate pages:ChatPage}" />
     </FlyoutItem>
 
-    <!-- Логин НЕ добавляем в меню, оставляем только как маршрут -->
-    <ShellContent Route="login" ContentTemplate="{DataTemplate pages:LoginPage}" />
+    <!-- Логин: маршрут есть, но не показываем -->
+    <ShellContent Route="login"
+                  FlyoutItemIsVisible="False"
+                  ContentTemplate="{DataTemplate pages:LoginPage}" />
 
 </Shell>
