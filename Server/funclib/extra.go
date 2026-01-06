@@ -3,21 +3,15 @@ package funclib
 import (
 	"fmt"
 	"net/http"
-	"time"
+	"udlib/data"
 
-  	"database/sql"
+	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// Func for Error test
-func FastErroring(err error, txt string) (status bool) {
-  if err != nil {
-    h, m, s := time.Now().Clock()
-    fmt.Printf("%d:%d:%d|\n%s ==> %v\n",h,m,s , txt, err)
-    http.NotFoundHandler()
-    return false
+func ParseRequest(r *http.Request) data.RequestData {
+  return data.RequestData{
   }
-  return true
 }
 
 

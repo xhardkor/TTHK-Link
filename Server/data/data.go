@@ -21,37 +21,16 @@ const (
   ID = "id"
   Token = "token"
   CourseID = "course_id"
+  Msg = "msg"
 )
+const SecretGroup = "admin"
 
 // Structs:
 
-// User JSON struct
-type UserJSON struct {
-  ID        int     `json:"id,omitempty"`
-  User      string  `json:"user,omitempty"`
-  Password  string  `json:"password,omitempty"`
-  IsAdmin   bool    `json:"is_admin,omitempty"`
-  GroupID   string  `json:"group_id,omitempty"`
-  Created   string  `json:"created,omitempty"`
-}
-// Courses JSON struct
-type CourseJSON struct {
-  ID          int     `json:"id,omitempty"`
-  GroupID     string  `json:"group_id,omitempty"`
-  Desc        string  `json:"desc,omitempty"`
-  CourseName  string  `json:"name,omitempty"`
-}
-// Messages JSON struct
-type MessageJSON struct {
-  ID          int     `json:"id,omitempty"`
-  Created     string  `json:"created,omitempty"`
-  Msg         string  `json:"desc,omitempty"`
-  CourseName  string  `json:"name,omitempty"`
-  UserID      string  `json:"user_id,omitempty"`
-  GroupID     string  `json:"group_id,omitempty"`
-}
 
 
+// Const variable for User_Table
+const User_Table = "user_t"
 // Defining user_t table for convinience [private because of low key]
 type user_col struct {
   ID, Login, Password, IsAdmin, GroupID, Created string
@@ -65,10 +44,10 @@ var UserCols = user_col{
   GroupID: "GroupID",
   Created: "Created",
 }
+
+
 // Const variable for User_Table
-const User_Table = "user_t"
-
-
+const Course_Table = "course_t"
 // Defining course_t table for convinience [private because of low key]
 type course_col struct {
   ID, GroupID, Desc, CoName string
@@ -80,11 +59,10 @@ var CourseCols = course_col{
   Desc: "Description",
   CoName: "CourseName",
 }
+
+
 // Const variable for User_Table
-const Course_Table = "course_t"
-
-
-
+const Message_Table = "message_t"
 // Defining message_t table for convinience [private because of low key]
 type message_col struct {
   ID, Created, Msg, UserID, CourseID string
@@ -97,5 +75,34 @@ var MessageCols = message_col{
   UserID: "UserID",
   CourseID: "CourseID",
 }
-// Const variable for User_Table
-const Message_Table = "message_t"
+
+// Easy Requests
+type RequestData struct {
+  user user_col
+}
+
+
+// JSON Structs:
+
+type UserJSON struct {
+  ID        int     `json:"id,omitempty"`
+  User      string  `json:"user,omitempty"`
+  Password  string  `json:"password,omitempty"`
+  IsAdmin   bool    `json:"is_admin,omitempty"`
+  GroupID   string  `json:"group_id,omitempty"`
+  Created   string  `json:"created,omitempty"`
+}
+type CourseJSON struct {
+  ID          int     `json:"id,omitempty"`
+  GroupID     string  `json:"group_id,omitempty"`
+  Desc        string  `json:"desc,omitempty"`
+  CourseName  string  `json:"name,omitempty"`
+}
+type MessageJSON struct {
+  ID          int     `json:"id,omitempty"`
+  Created     string  `json:"created,omitempty"`
+  Msg         string  `json:"desc,omitempty"`
+  CourseName  string  `json:"name,omitempty"`
+  UserID      string  `json:"user_id,omitempty"`
+  GroupID     string  `json:"group_id,omitempty"`
+}

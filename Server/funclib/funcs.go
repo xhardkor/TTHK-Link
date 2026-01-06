@@ -4,7 +4,9 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+  "time"
 
 	// Libs
 	"udlib/data"
@@ -14,32 +16,53 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-
 // AUTH POST; It is used for accepting HTTP POST Method [creating new account]
 func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+  defer fmt.Println("PostAuth: Request Body Closed")
+  defer r.Body.Close()
 
   // Getting data from our request
   username := r.FormValue(data.Login)
   password := r.FormValue(data.Password)
   group := r.FormValue(data.GroupID)
+  //gr_admin := r.FormValue(data.SecretGroup)
 
   // Checking if some requests are NULL
   if username == "" || password == "" || group == "" {
-    fmt.Printf("\nPOST username %s\npassword %s\ngroup %s\n", username, password, group)
-    w.Write([]byte("NULL"))
+    tmp := struct {
+      Us    string  `json:"login"`
+      Pass  string  `json:"password"`
+      Gr    string  `json:"group"`
+    }{
+      Us: username,
+      Pass: password,
+      Gr: group,
+    }
+    w.WriteHeader(http.StatusConflict)
+
+    enc := json.NewEncoder(w)
+    if err := enc.Encode(&tmp); err != nil {
+      log.Printf("| PostAuth: Some Error| Error ==> %s\n", err)
+      return
+    }
     return
   }
+
+  // Cheking if username already exists
+  // NEXT
 
 
   // DB Insert [using Prepare]
   cols := data.UserCols
-  querry := fmt.Sprintf("INSERT INTO %s (%s, %s, %s) VALUES (?, ?, ?)", data.User_Table, cols.Login, cols.Password, cols.GroupID)
+  querry := fmt.Sprintf("INSERT INTO %s (%s, %s, %s, %s) VALUES (?, ?, ?, ?)", data.User_Table, cols.Login, cols.Password, cols.GroupID, cols.Created)
 
-  userPOST, err := db.Prepare(querry)
-  stat := FastErroring(err, "PostAuth: DB Prep | Error")
+  stmt, err := db.Prepare(querry)
+  if err != nil {
+    log.Printf("PostAuth: DB Prep | Error ==> %s\n", err)
+    return
+  }
   defer fmt.Println("PostAuth: DB Prepare | Closed")
-  defer userPOST.Close()
-  if !stat { return }
+  defer stmt.Close()
 
   // Hash for password
   h := sha256.New()
@@ -47,14 +70,17 @@ func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   hash := h.Sum(nil)
 
   // Writing into DB
-  res, err := userPOST.Exec(username, hash, group)
-  stat = FastErroring(err, "PostAuth: Exec | Some Issues")
-  if !stat { return }
+  res, err := stmt.Exec(username, hash, group, time.Now())
+  if err != nil {
+    log.Printf("PostAuth: Exec | Some Issues ==> %s\n", err)
+    return
+  }
   if res == nil {
     fmt.Println("Test of NULL")
     w.Write([]byte("That Login already exists!"))
     return
   }
+  w.WriteHeader(http.StatusAccepted)
   w.Write([]byte("OK!")) // delete at some point
 
 }
@@ -62,6 +88,8 @@ func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 //// IN THE FUTURE
 // GET AUTH; Generates token for current session
 func GetAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+  defer fmt.Println("GetAuth: Request Body Closed")
+  defer r.Body.Close()
 
   // Login and Password
   userid := r.PathValue(data.ID)
@@ -75,10 +103,12 @@ func GetAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 
 // USER GET; It is used for getting HTTP GET Method
-// Gives all info user has (eg. login, groupid[eg. "TITge24"] and date->created)
+// Gives all info user has (eg. login, group_id[eg. "TITge24"] and date->created)
 func GetUserInfo(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+  defer fmt.Println("GetUserInfo: Request Body Closed")
+  defer r.Body.Close()
 
-  userid := r.PathValue(data.Token)
+  userid := r.FormValue(data.Token)
 
   // Making querry from "Template" [using Query]
   cols := data.UserCols
@@ -86,35 +116,40 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   cols.Login, cols.GroupID, cols.Created, data.User_Table)
 
   rows, err := db.Query(querry, userid)
-  stat := FastErroring(err, "GetUserInfo: DB Query | Error")
+  if err != nil {
+    log.Printf("GetUserInfo: DB Query | Error ==> %s\n", err)
+    return
+  }
   defer fmt.Println("GetUserInfo: DB Query | Closed")
   defer rows.Close()
-  if !stat { return }
 
 
   // Creating and Using JSON format
   var us data.UserJSON
   for rows.Next() {
     if err = rows.Scan(&us.User, &us.GroupID, &us.Created); err != nil {
-      stat := FastErroring(err, "GetUserInfo: DB Prep | Some Issues")
-      if !stat { return }
+      log.Printf("GetUserInfo: JSON Prep | Error ==> %s\n", err)
+      return
     }
-    fmt.Println(us)
   }
 
   marsh, err := json.Marshal(us)
-  stat = FastErroring(err, "GetUserInfo: JSON Marshal | Can't Marshal")
-  if !stat { return }
+  if err != nil {
+    log.Printf("GetUserInfo: JSON Marshal | Error ==> %s\n", err)
+    return
+  }
   w.Write(marsh)
-  fmt.Println("GET was Sent")
+  fmt.Println("JSON was sent")
 
 }
 
 
 // GET COURSES; it is used to get all Groups from user
 func GetCourses(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-  
-  userid := r.PathValue(data.Token)
+  defer fmt.Println("GetCourses: Request Body Closed")
+  defer r.Body.Close()
+
+  userid := r.FormValue(data.Token)
 
   c_cols := data.CourseCols
   u_cols := data.UserCols
@@ -127,76 +162,122 @@ func GetCourses(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
   row, err := db.Query(querry, userid)
   if err != nil {
-    fmt.Println(err)
+    log.Printf("GetCourses: DB Querry | Error ==> %s\n", err)
     return 
   }
+  defer fmt.Println("GetCourses Row Closed")
+  defer row.Close()
+
 
   // Creating and Using JSON format
   var courses []data.CourseJSON
   for row.Next() {
     var course data.CourseJSON
     if err := row.Scan(&course.CourseName); err != nil {
-      fmt.Println("ERR", err)
+      log.Printf("GetCourses: JSON Prep | Error ==> %s\n", err)
       return
     }
     courses = append(courses, course)
   }
-  fmt.Println(courses)
 
   marsh, err := json.Marshal(courses)
   if err != nil {
-    fmt.Println("ERR", err)
+    log.Printf("GetCourses: JSON Marshal | Error ==> %s\n", err)
     return
   }
   w.Write(marsh)
 }
 
 
-
+// GET MESSAGES
 func GetCourseMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+  defer fmt.Println("GetCourseMessages: Request Body Closed")
+  defer r.Body.Close()
 
   group_id := r.PathValue(data.GroupID)
   course_id := r.PathValue(data.CourseID)
+  req := ParseRequest(r)
+  fmt.Println(req.Token)
   // TOKEN CHECKER => FUTURE
   //user_token := r.FormValue(data.Token)
+
   m_cols := data.MessageCols
   c_cols := data.CourseCols
   u_cols := data.UserCols
 
   querry := fmt.Sprintf(`
-    SELECT u.%s, m.%s, m.%s FROM %s AS m
+    SELECT u.%s, m.%s, m.%s, m.%s FROM %s AS m
     JOIN %s AS c ON m.%s=c.%s
     JOIN %s AS u ON m.%s=u.%s
     WHERE c.%s=? AND c.%s=?
   `, 
-  u_cols.Login, m_cols.Msg, m_cols.Created, data.Message_Table,
+  u_cols.Login, m_cols.Msg, m_cols.Created, m_cols.ID, data.Message_Table,
   data.Course_Table, m_cols.CourseID, c_cols.ID,
   data.User_Table, m_cols.UserID, u_cols.ID,
   c_cols.GroupID, c_cols.CoName)
 
   row, err := db.Query(querry, group_id, course_id)
   if err != nil {
-    fmt.Println("GetCourseMessages ERR:", err)
+    log.Printf("GetCourseMessages: DB Querry | Error ==> %s\n", err)
     return
   }
+  defer fmt.Println("GetCourseMessages Row Closed")
   defer row.Close()
 
+  // Creating and Using JSON format
   var msgs []data.MessageJSON
   for row.Next() {
     var msg data.MessageJSON
-    if err := row.Scan(&msg.UserID, &msg.Msg, &msg.Created); err != nil {
-      fmt.Println("ERR:", err)
+    if err := row.Scan(&msg.UserID, &msg.Msg, &msg.Created, &msg.ID); err != nil {
+      log.Printf("GetCourseMessages: JSON Prep | Error ==> %s\n", err)
       return
     }
     msgs = append(msgs, msg)
   }
-  fmt.Println(msgs)
 
   marsh, err := json.Marshal(msgs)
   if err != nil {
-    fmt.Println("ERR", err)
+    log.Printf("GetCourseMessages: JSON Marshal | Error ==> %s\n", err)
     return
   }
   w.Write(marsh)
+
+}
+
+
+// EDIT MESSAGE
+func EditMessage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+  defer fmt.Println("EditMessage Body Closed")
+  defer r.Body.Close()
+
+  group := r.PathValue(data.GroupID)
+  course := r.PathValue(data.CourseID)
+  msg := r.FormValue(data.Msg)
+  token := r.FormValue(data.Token)
+
+  m_cols := data.MessageCols
+  c_cols := data.CourseCols
+  u_cols := data.UserCols
+
+  querry := fmt.Sprintf(`
+    UPDATE %s AS m
+    JOIN %s AS u ON m.%s=u.%s
+    JOIN %s AS c ON m.%s=c.%s
+    SET m.%s=?
+    WHERE u.%s=? AND c.%s=? AND u.%s=?
+  `, 
+  data.Message_Table,
+  data.User_Table, m_cols.UserID, u_cols.ID,
+  data.Course_Table, m_cols.CourseID, c_cols.ID,
+  m_cols.Msg,
+  u_cols.GroupID, c_cols.CoName, u_cols.Login)
+
+  rows, err := db.Query(querry, msg, group, course, token)
+  if err != nil {
+    log.Printf("EditMessage: DB Query | Error ==> %s", err)
+    return
+  }
+  defer fmt.Println("EditMessage Row Closed")
+  defer rows.Close()
 
 }
