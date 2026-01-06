@@ -99,6 +99,24 @@
                                HorizontalTextAlignment="Center"
                                Opacity="0.75"
                                Margin="0,6,0,0"/>
+                        
+                        
+                        
+                        <!-- FOTO -->
+                        <Grid Padding="20" RowDefinitions="Auto,*,Auto">
+
+                            <!-- ЛОГО -->
+                            <Image
+                                Source="logo.png"
+                                HeightRequest="180"
+                                WidthRequest="180"
+                                Aspect="AspectFit"
+                                HorizontalOptions="Center"
+                                Margin="0,20,0,30" />
+
+                            
+
+                        </Grid>
                     </VerticalStackLayout>
                 </Frame>
             </Grid>
