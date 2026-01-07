@@ -40,6 +40,7 @@ public static class MauiProgram
         builder.Services.AddTransient<CoursePage>();
         builder.Services.AddTransient<ChatPage>();
         builder.Services.AddSingleton<FlyoutViewModel>();
+        builder.Services.AddTransient<NewsPage>();
         
         //shell
         builder.Services.AddSingleton<AppShell>();

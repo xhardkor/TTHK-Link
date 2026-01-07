@@ -56,12 +56,37 @@ public partial class FlyoutViewModel : ObservableObject
     {
         Items.Clear();
 
-        // Секции как в Telegram
-        Items.Add(new FlyoutMenuItem { Section="Основное", Title="Группы", Icon="ic_groups.png", Route="groups" });
-        Items.Add(new FlyoutMenuItem { Section="Основное", Title="Чат", Icon="ic_chat.png", Route="chat" });
+        Items.Add(new FlyoutMenuItem
+        {
+            Section = "Основное",
+            Title = "Новости",
+            Icon = "news.png",
+            Route = "news"
+        });
 
-        Items.Add(new FlyoutMenuItem { Section="Приложение", Title="Оформление", Icon="ic_theme.png", Route="theme" });
-        Items.Add(new FlyoutMenuItem { Section="Приложение", Title="О приложении", Icon="ic_info.png", Route="about" });
+        Items.Add(new FlyoutMenuItem
+        {
+            Section = "Основное",
+            Title = "Чат",
+            Icon = "chat.png",
+            Route = "chat"
+        });
+
+        Items.Add(new FlyoutMenuItem
+        {
+            Section = "Приложение",
+            Title = "Оформление",
+            Icon = "design.png",
+            Route = "theme"
+        });
+
+        Items.Add(new FlyoutMenuItem
+        {
+            Section = "Приложение",
+            Title = "О приложении",
+            Icon = "info.png",
+            Route = "about"
+        });
     }
 
     [RelayCommand]

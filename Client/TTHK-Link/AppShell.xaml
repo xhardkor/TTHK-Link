@@ -127,9 +127,9 @@
 
     <!-- ====== РОУТЫ (экраны) ====== -->
     <!-- ====== РОУТЫ (экраны) ====== -->
-    <FlyoutItem Title="Группы" Route="groups" FlyoutItemIsVisible="False">
-        <ShellContent Route="groups"
-                      ContentTemplate="{DataTemplate pages:CoursePage}" />
+    <FlyoutItem Title="Новости" Route="news" FlyoutItemIsVisible="False">
+        <ShellContent Route="news"
+                      ContentTemplate="{DataTemplate pages:NewsPage}" />
     </FlyoutItem>
 
     <FlyoutItem Title="Чат" Route="chat" FlyoutItemIsVisible="False">

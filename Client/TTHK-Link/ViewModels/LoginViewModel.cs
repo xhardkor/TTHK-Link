@@ -47,7 +47,7 @@ public partial class LoginViewModel : ObservableObject
             }
 
             // Edukas login → absoluutne navigeerimine gruppide lehele
-            await Shell.Current.GoToAsync("//groups");
+            await Shell.Current.GoToAsync("//news");
         }
         catch (Exception ex)
         {
