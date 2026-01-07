@@ -29,5 +29,6 @@ public partial class ThemeViewModel : ObservableObject
 
         _theme.Apply(m);
         Current = m;
+        System.Diagnostics.Debug.WriteLine($"THEME SET: {m}");
     }
 }

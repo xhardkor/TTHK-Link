@@ -1,50 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="TTHK_Link.Pages.ThemePage"
     Title="Оформление"
-    BackgroundColor="#0B1424">
+    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#0B1424}">
 
     <VerticalStackLayout Padding="16" Spacing="12">
 
         <Label Text="Тема"
                FontSize="22"
                FontAttributes="Bold"
-               TextColor="White" />
+               TextColor="{AppThemeBinding Light=#111111, Dark=#FFFFFF}" />
 
         <Label Text="Выберите, как будет выглядеть приложение."
                FontSize="13"
-               TextColor="#9FB0C8" />
+               TextColor="{AppThemeBinding Light=#6B7280, Dark=#9FB0C8}" />
 
-        <Frame Padding="12" CornerRadius="16" HasShadow="False" BackgroundColor="#0F1B2D">
+        <Frame Padding="12"
+               CornerRadius="16"
+               HasShadow="False"
+               BackgroundColor="{AppThemeBinding Light=#F2F2F7, Dark=#0F1B2D}">
             <VerticalStackLayout Spacing="10">
 
                 <Button Text="Системная"
-                        BackgroundColor="#1E2A3D"
-                        TextColor="White"
-                        CornerRadius="14"
                         Command="{Binding SetThemeCommand}"
-                        CommandParameter="System"/>
+                        CommandParameter="System" />
 
                 <Button Text="Светлая"
-                        BackgroundColor="#1E2A3D"
-                        TextColor="White"
-                        CornerRadius="14"
                         Command="{Binding SetThemeCommand}"
-                        CommandParameter="Light"/>
+                        CommandParameter="Light" />
 
                 <Button Text="Тёмная"
-                        BackgroundColor="#1E2A3D"
-                        TextColor="White"
-                        CornerRadius="14"
                         Command="{Binding SetThemeCommand}"
-                        CommandParameter="Dark"/>
+                        CommandParameter="Dark" />
+
+                <!-- тест кнопки: можно потом удалить -->
+                <Button Text="TEST LIGHT" Clicked="OnTestLight" />
+                <Button Text="TEST DARK"  Clicked="OnTestDark" />
 
             </VerticalStackLayout>
         </Frame>
 
         <Label Text="{Binding Current, StringFormat='Текущая: {0}'}"
                FontSize="13"
-               TextColor="#9FB0C8" />
+               TextColor="{AppThemeBinding Light=#6B7280, Dark=#9FB0C8}" />
+
     </VerticalStackLayout>
 </ContentPage>

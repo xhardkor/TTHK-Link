@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using TTHK_Link.ViewModels;
 
 namespace TTHK_Link.Pages;
@@ -14,5 +8,15 @@ public partial class ThemePage : ContentPage
     {
         InitializeComponent();
         BindingContext = vm;
+    }
+
+    private void OnTestLight(object sender, EventArgs e)
+    {
+        Application.Current!.UserAppTheme = AppTheme.Light;
+    }
+
+    private void OnTestDark(object sender, EventArgs e)
+    {
+        Application.Current!.UserAppTheme = AppTheme.Dark;
     }
 }
