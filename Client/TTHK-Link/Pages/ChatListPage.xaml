@@ -1,0 +1,67 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TTHK_Link.Pages.ChatListPage"
+    Title="Чаты"
+    BackgroundColor="#0B1424">
+
+    <CollectionView ItemsSource="{Binding Items}"
+                    SelectionMode="None"
+                    Margin="0,8,0,0">
+
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Grid Padding="16,12" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                    <!-- аватар-кружок -->
+                    <Frame WidthRequest="46" HeightRequest="46"
+                           CornerRadius="23"
+                           HasShadow="False"
+                           BackgroundColor="#1E2A3D"
+                           Padding="0">
+                        <Label Text="💬"
+                               FontSize="18"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               TextColor="White" />
+                    </Frame>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="3">
+                        <Label Text="{Binding Title}"
+                               TextColor="White"
+                               FontSize="16"
+                               FontAttributes="Bold" />
+                        <Label Text="{Binding LastMessage}"
+                               TextColor="#9FB0C8"
+                               FontSize="13"
+                               LineBreakMode="TailTruncation" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="2" Spacing="6" HorizontalOptions="End">
+                        <Label Text="{Binding LastAt, StringFormat='{0:HH:mm}'}"
+                               TextColor="#6F86A5"
+                               FontSize="12"
+                               HorizontalTextAlignment="End" />
+
+                        <Frame IsVisible="{Binding UnreadCount}"
+                               Padding="8,2"
+                               CornerRadius="10"
+                               HasShadow="False"
+                               BackgroundColor="#2A7FFF"
+                               HorizontalOptions="End">
+                            <Label Text="{Binding UnreadCount}"
+                                   TextColor="White"
+                                   FontSize="12"/>
+                        </Frame>
+                    </VerticalStackLayout>
+
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenChatCommand}"
+                            CommandParameter="{Binding .}" />
+                    </Grid.GestureRecognizers>
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+
+    </CollectionView>
+</ContentPage>

@@ -132,10 +132,15 @@
                       ContentTemplate="{DataTemplate pages:NewsPage}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Чат" Route="chat" FlyoutItemIsVisible="False">
-        <ShellContent Route="chat"
-                      ContentTemplate="{DataTemplate pages:ChatPage}" />
+    <FlyoutItem Title="Чаты" Route="chatlist" FlyoutItemIsVisible="False">
+        <ShellContent Route="chatlist"
+                      ContentTemplate="{DataTemplate pages:ChatListPage}" />
     </FlyoutItem>
+
+    <!-- Диалог (не в меню), открывается по параметрам -->
+    <ShellContent Route="chat"
+                  FlyoutItemIsVisible="False"
+                  ContentTemplate="{DataTemplate pages:ChatPage}" />
 
     <ShellContent Route="login"
                   FlyoutItemIsVisible="False"
@@ -143,6 +148,11 @@
     
     <FlyoutItem Title="О приложении" Route="about">
         <ShellContent ContentTemplate="{DataTemplate pages:AboutPage}" />
+    </FlyoutItem>
+    
+    <FlyoutItem Title="Оформление" Route="theme" FlyoutItemIsVisible="False">
+        <ShellContent Route="theme"
+                      ContentTemplate="{DataTemplate pages:ThemePage}" />
     </FlyoutItem>
     
 </Shell>

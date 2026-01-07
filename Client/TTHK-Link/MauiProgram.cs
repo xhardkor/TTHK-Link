@@ -34,13 +34,17 @@ public static class MauiProgram
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<CourseViewModel>();
         builder.Services.AddTransient<ChatViewModel>();
-
+        builder.Services.AddSingleton<ChatListViewModel>();
+        builder.Services.AddTransient<ChatListPage>();
         // pages
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<CoursePage>();
         builder.Services.AddTransient<ChatPage>();
         builder.Services.AddSingleton<FlyoutViewModel>();
         builder.Services.AddTransient<NewsPage>();
+        builder.Services.AddSingleton<TTHK_Link.Services.IThemeService, TTHK_Link.Services.ThemeService>();
+        builder.Services.AddSingleton<TTHK_Link.ViewModels.ThemeViewModel>();
+        builder.Services.AddTransient<TTHK_Link.Pages.ThemePage>();
         
         //shell
         builder.Services.AddSingleton<AppShell>();

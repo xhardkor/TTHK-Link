@@ -69,7 +69,7 @@ public partial class FlyoutViewModel : ObservableObject
             Section = "Основное",
             Title = "Чат",
             Icon = "chat.png",
-            Route = "chat"
+            Route = "chatlist"
         });
 
         Items.Add(new FlyoutMenuItem

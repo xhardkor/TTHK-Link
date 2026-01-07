@@ -1,0 +1,50 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TTHK_Link.Pages.ThemePage"
+    Title="Оформление"
+    BackgroundColor="#0B1424">
+
+    <VerticalStackLayout Padding="16" Spacing="12">
+
+        <Label Text="Тема"
+               FontSize="22"
+               FontAttributes="Bold"
+               TextColor="White" />
+
+        <Label Text="Выберите, как будет выглядеть приложение."
+               FontSize="13"
+               TextColor="#9FB0C8" />
+
+        <Frame Padding="12" CornerRadius="16" HasShadow="False" BackgroundColor="#0F1B2D">
+            <VerticalStackLayout Spacing="10">
+
+                <Button Text="Системная"
+                        BackgroundColor="#1E2A3D"
+                        TextColor="White"
+                        CornerRadius="14"
+                        Command="{Binding SetThemeCommand}"
+                        CommandParameter="System"/>
+
+                <Button Text="Светлая"
+                        BackgroundColor="#1E2A3D"
+                        TextColor="White"
+                        CornerRadius="14"
+                        Command="{Binding SetThemeCommand}"
+                        CommandParameter="Light"/>
+
+                <Button Text="Тёмная"
+                        BackgroundColor="#1E2A3D"
+                        TextColor="White"
+                        CornerRadius="14"
+                        Command="{Binding SetThemeCommand}"
+                        CommandParameter="Dark"/>
+
+            </VerticalStackLayout>
+        </Frame>
+
+        <Label Text="{Binding Current, StringFormat='Текущая: {0}'}"
+               FontSize="13"
+               TextColor="#9FB0C8" />
+    </VerticalStackLayout>
+</ContentPage>
