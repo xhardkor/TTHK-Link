@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -6,45 +5,26 @@
     Title="Оформление"
     BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#0B1424}">
 
-    <VerticalStackLayout Padding="16" Spacing="12">
+    <VerticalStackLayout Padding="20" Spacing="16">
 
-        <Label Text="Тема"
-               FontSize="22"
+        <Label Text="Переключатель темы."
+               FontSize="18"
                FontAttributes="Bold"
                TextColor="{AppThemeBinding Light=#111111, Dark=#FFFFFF}" />
 
-        <Label Text="Выберите, как будет выглядеть приложение."
-               FontSize="13"
-               TextColor="{AppThemeBinding Light=#6B7280, Dark=#9FB0C8}" />
+        <Button Text="LIGHT"
+                HeightRequest="52"
+                CornerRadius="14"
+                BackgroundColor="#5A36F0"
+                TextColor="White"
+                Clicked="OnTestLight" />
 
-        <Frame Padding="12"
-               CornerRadius="16"
-               HasShadow="False"
-               BackgroundColor="{AppThemeBinding Light=#F2F2F7, Dark=#0F1B2D}">
-            <VerticalStackLayout Spacing="10">
-
-                <Button Text="Системная"
-                        Command="{Binding SetThemeCommand}"
-                        CommandParameter="System" />
-
-                <Button Text="Светлая"
-                        Command="{Binding SetThemeCommand}"
-                        CommandParameter="Light" />
-
-                <Button Text="Тёмная"
-                        Command="{Binding SetThemeCommand}"
-                        CommandParameter="Dark" />
-
-                <!-- тест кнопки: можно потом удалить -->
-                <Button Text="TEST LIGHT" Clicked="OnTestLight" />
-                <Button Text="TEST DARK"  Clicked="OnTestDark" />
-
-            </VerticalStackLayout>
-        </Frame>
-
-        <Label Text="{Binding Current, StringFormat='Текущая: {0}'}"
-               FontSize="13"
-               TextColor="{AppThemeBinding Light=#6B7280, Dark=#9FB0C8}" />
+        <Button Text="DARK"
+                HeightRequest="52"
+                CornerRadius="14"
+                BackgroundColor="#5A36F0"
+                TextColor="White"
+                Clicked="OnTestDark" />
 
     </VerticalStackLayout>
 </ContentPage>
