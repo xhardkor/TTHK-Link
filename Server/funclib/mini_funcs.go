@@ -1,15 +1,15 @@
 package funclib
 
 import (
-  "crypto/sha256"
-  "fmt"
-  "log"
-  "time"
+	"crypto/sha256"
+	"fmt"
+	"log"
+	"time"
 
-  // Libs
-  "udlib/data"
+	// Libs
+	"udlib/data"
 
-  // Database
+	// Database
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -17,10 +17,10 @@ import (
 // Alias for TokenChecker output values
 type tokenGetter func(string, []byte)([]byte, error)
 // Generates token for a current session
-func GetToken(user string, psw []byte) (hash []byte, err error) {
+func GetToken(user string, hs_psw []byte) (token []byte, null error) {
 
   // Logging
-  if user == "" || psw == nil{
+  if user == "" || hs_psw == nil{
     log.Printf("GetToken: Logging | Some NULL's")
     return nil, fmt.Errorf("NULL")
   }
@@ -28,13 +28,14 @@ func GetToken(user string, psw []byte) (hash []byte, err error) {
   // Generates Token
   h := sha256.New()
   t := time.Now().Add(10 * time.Minute)
-  h.Write([]byte(user + string(psw) + t.GoString() + data.Salt))
-  hash = h.Sum(nil)
-  return hash, nil
+  h.Write([]byte(user + string(hs_psw) + t.GoString() + data.Salt))
+  token = h.Sum(nil)
+  return token, nil
 }
 
+
 // Toker Checker 
-func TokenChecker(user string, token []byte, db *sql.DB) (tokenGetter, bool) {
+func CheckToken(user string, token []byte, db *sql.DB) (gen_tk tokenGetter, exist bool) {
 
   t_cols := data.TokenCols
   u_cols := data.UserCols
@@ -48,20 +49,13 @@ func TokenChecker(user string, token []byte, db *sql.DB) (tokenGetter, bool) {
   data.User_Table, t_cols.UserName, u_cols.Login,
   t_cols.UserName, t_cols.Token)
 
-  row, err := db.Query(querry, user, token)
-  if err != nil {
+  // NOT FINISHED
+  var tokenTime string
+  if err := db.QueryRow(querry, user, token).Scan(&tokenTime); err != nil {
     log.Printf("TokenChecker: DB Query | Error ==> %s", err)
-    return nil, false
-  }
-  defer fmt.Println("TokenChecker Row Closed")
-  defer row.Close()
-
-  if err := row.Scan(); err != nil {
     return GetToken, false
   }
-
   return nil, true
-
 }
 
 // Hash Password Generator
@@ -72,3 +66,21 @@ func CreateHashPsw(psw string) []byte {
   return hash
 }
 
+
+func UserCheck(user string, db *sql.DB) (exist bool, err error) {
+
+  u_cols := data.UserCols
+  query := fmt.Sprintf(`
+    SELECT u.%s FROM %s
+    WHERE u.%s=?
+  `, u_cols.Login, data.User_Table, u_cols.Login)
+  
+  var name string
+  if err := db.QueryRow(query, user).Scan(&name); err == sql.ErrNoRows {
+    return false, nil
+  } else if err != nil {
+    return false, fmt.Errorf("%s", err)
+  }
+  return true, nil
+
+}

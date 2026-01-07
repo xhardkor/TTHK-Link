@@ -28,7 +28,7 @@ func main() {
   // JSON file reading and Formating
   readFile, err := os.ReadFile(data.DB_Dir)
   if err != nil {
-    log.Printf("MAIN: OS | Can't open and read file ==> %s", err)
+    log.Printf("MAIN: OS Read File | Error ==> %s", err)
     return
   }
 
@@ -65,11 +65,7 @@ func main() {
   mux.HandleFunc("POST /auth/create", func(w http.ResponseWriter, r *http.Request) {
     funclib.PostAuth(w, r, db)
   })
-  // give id and token
-  mux.HandleFunc("GET /auth", func(w http.ResponseWriter, r *http.Request) {
-    funclib.GetAuth(w, r, db) // NEXT
-  })
-  // give all info user has (w/o courses)
+  // give all info user has (w/o courses)[also it gives Token]
   mux.HandleFunc("GET /user/info", func(w http.ResponseWriter, r *http.Request) {
     funclib.GetUserInfo(w, r, db)
   })

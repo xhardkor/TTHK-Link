@@ -38,47 +38,49 @@ func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
       Pass: password,
       Gr: group,
     }
-    w.WriteHeader(http.StatusConflict)
 
     enc := json.NewEncoder(w)
     if err := enc.Encode(&tmp); err != nil {
-      log.Printf("| PostAuth: Some Error| Error ==> %s\n", err)
+      w.WriteHeader(http.StatusInternalServerError)
+      log.Printf("| PostAuth: Encoder | Error ==> %s\n", err)
       return
     }
+    w.WriteHeader(http.StatusBadRequest)
     return
   }
 
-
-  // NEXT
-  // Cheking if username already exists
-
+  // Cheking if Username already exists
+  ex, err := UserCheck(username, db)
+  if err != nil {
+    log.Printf("| PostAuth: Username check | Error ==> %s\n", err)
+    return
+  }
+  if !ex {
+    w.WriteHeader(http.StatusBadRequest)
+    return
+  }
 
   // Hash for password
   hash := CreateHashPsw(password)
 
-
-  // DB Insert [using Prepare]
+  // Insert data into DB
   cols := data.UserCols
-  querry := fmt.Sprintf("INSERT INTO %s (%s, %s, %s, %s) VALUES (?, ?, ?, ?)", data.User_Table, cols.Login, cols.Password, cols.GroupID, cols.Created)
+  query := fmt.Sprintf("INSERT INTO %s (%s, %s, %s, %s) VALUES (?, ?, ?, ?)", data.User_Table, cols.Login, cols.Password, cols.GroupID, cols.Created)
 
-  stmt, err := db.Prepare(querry)
+  res, err := db.Exec(query, username, hash, group, time.Now())
   if err != nil {
-    log.Printf("| PostAuth: DB Prep | Error ==> %s\n", err)
+    w.WriteHeader(http.StatusInternalServerError)
+    log.Printf("| PostAuth: DB Exec | Error ==> %s\n", err)
     return
   }
-  defer fmt.Println("| PostAuth: DB Prepare | Closed")
-  defer stmt.Close()
-
-
-  // Writing into DB
-  res, err := stmt.Exec(username, hash, group, time.Now())
+  rowAdd, err := res.RowsAffected()
   if err != nil {
-    log.Printf("| PostAuth: Exec | Some Issues ==> %s\n", err)
+    w.WriteHeader(http.StatusInternalServerError)
+    log.Printf("| PostAuth: Exec RowsAdded | Error ==> %s\n", err)
     return
   }
-  if res == nil {
-    fmt.Println("Test of NULL")
-    w.Write([]byte("That Login already exists!"))
+  if rowAdd<=0 {
+    w.WriteHeader(http.StatusNoContent)
     return
   }
 
@@ -87,34 +89,41 @@ func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   tmp := struct{ Token []byte `json:"token"`}{Token: token}
   marsh, err := json.Marshal(tmp)
   if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
     log.Printf("| PostAuth: JSON Marshal | Error ==> %s", err)
     return
   }
-  w.WriteHeader(http.StatusAccepted)
+  w.WriteHeader(http.StatusCreated)
   w.Write(marsh)
 
 }
 
 
-// USER GET; It is used for getting HTTP GET Method
 // Gives all info user has (eg. login, group_id[eg. "TITge24"] and date->created)
 func GetUserInfo(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   defer fmt.Println("GetUserInfo: Request Body Closed")
   defer r.Body.Close()
 
-  token := r.FormValue(data.Token)
-  // Token check 
-  if token == "" {
-    //getToken(w, r.FormValue(data.Login))
+  user := r.FormValue(data.Login)
+  pswd := r.FormValue(data.Password)
+  hs_psw := CreateHashPsw(pswd)
+
+  // Generate Token
+  token, err := GetToken(user, hs_psw)
+  if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
+    log.Printf("| GetUserInfo: Token | NULL's ==> %s", err)
+    return
   }
 
-  // Making querry from "Template" [using Query]
+  // Making query from "Template" [using Query]
   cols := data.UserCols
-  querry := fmt.Sprintf("SELECT %s, %s, %s FROM %s WHERE ID=?",
+  query := fmt.Sprintf("SELECT %s, %s, %s FROM %s WHERE ID=?",
   cols.Login, cols.GroupID, cols.Created, data.User_Table)
 
-  rows, err := db.Query(querry, token)
+  rows, err := db.Query(query, token)
   if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
     log.Printf("| GetUserInfo: DB Query | Error ==> %s\n", err)
     return
   }
@@ -126,6 +135,7 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   var us data.UserJSON
   for rows.Next() {
     if err = rows.Scan(&us.User, &us.GroupID, &us.Created); err != nil {
+      w.WriteHeader(http.StatusInternalServerError)
       log.Printf("| GetUserInfo: JSON Prep | Error ==> %s\n", err)
       return
     }
@@ -133,32 +143,42 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
   marsh, err := json.Marshal(us)
   if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
     log.Printf("| GetUserInfo: JSON Marshal | Error ==> %s\n", err)
     return
   }
+  w.WriteHeader(http.StatusOK)
   w.Write(marsh)
 
 }
 
 
-// GET COURSES; it is used to get all Groups from user
+// GET COURSES; it is used to get all Courses from user
 func GetCourses(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   defer fmt.Println("GetCourses: Request Body Closed")
   defer r.Body.Close()
 
-  userid := r.FormValue(data.Token)
+  token := r.FormValue(data.Token)
+  username := r.FormValue(data.Login)
+  _, ex := CheckToken(username, []byte(token), db)
+  // NOT FINISHED
+  if !ex {
+    w.WriteHeader(http.StatusInternalServerError)
+    return
+  }
 
   c_cols := data.CourseCols
   u_cols := data.UserCols
 
-  querry := fmt.Sprintf(`
+  query := fmt.Sprintf(`
     SELECT c.%s FROM %s AS c 
     INNER JOIN %s AS u ON c.%s=u.%s AND u.%s=?
   `,
   c_cols.CoName, data.Course_Table, data.User_Table, c_cols.GroupID, u_cols.GroupID, u_cols.ID)
 
-  row, err := db.Query(querry, userid)
+  row, err := db.Query(query, token)
   if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
     log.Printf("| GetCourses: DB Querry | Error ==> %s\n", err)
     return 
   }
@@ -171,6 +191,7 @@ func GetCourses(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   for row.Next() {
     var course data.CourseJSON
     if err := row.Scan(&course.CourseName); err != nil {
+      w.WriteHeader(http.StatusInternalServerError)
       log.Printf("| GetCourses: JSON Prep | Error ==> %s\n", err)
       return
     }
@@ -179,9 +200,11 @@ func GetCourses(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
   marsh, err := json.Marshal(courses)
   if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
     log.Printf("| GetCourses: JSON Marshal | Error ==> %s\n", err)
     return
   }
+  w.WriteHeader(http.StatusOK)
   w.Write(marsh)
 }
 
@@ -195,13 +218,12 @@ func GetCourseMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   course_id := r.PathValue(data.CourseID)
 
   // TOKEN CHECKER => FUTURE
-  //user_token := r.FormValue(data.Token)
 
   m_cols := data.MessageCols
   c_cols := data.CourseCols
   u_cols := data.UserCols
 
-  querry := fmt.Sprintf(`
+  query := fmt.Sprintf(`
     SELECT u.%s, m.%s, m.%s, m.%s FROM %s AS m
     JOIN %s AS c ON m.%s=c.%s
     JOIN %s AS u ON m.%s=u.%s
@@ -212,8 +234,9 @@ func GetCourseMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   data.User_Table, m_cols.UserID, u_cols.ID,
   c_cols.GroupID, c_cols.CoName)
 
-  row, err := db.Query(querry, group_id, course_id)
+  row, err := db.Query(query, group_id, course_id)
   if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
     log.Printf("| GetCourseMessages: DB Querry | Error ==> %s\n", err)
     return
   }
@@ -225,6 +248,7 @@ func GetCourseMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   for row.Next() {
     var msg data.MessageJSON
     if err := row.Scan(&msg.UserID, &msg.Msg, &msg.Created, &msg.ID); err != nil {
+      w.WriteHeader(http.StatusInternalServerError)
       log.Printf("| GetCourseMessages: JSON Prep | Error ==> %s\n", err)
       return
     }
@@ -232,9 +256,11 @@ func GetCourseMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   }
   marsh, err := json.Marshal(msgs)
   if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
     log.Printf("| GetCourseMessages: JSON Marshal | Error ==> %s\n", err)
     return
   }
+  w.WriteHeader(http.StatusOK)
   w.Write(marsh)
 
 }
@@ -247,6 +273,7 @@ func EditMessage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
   group := r.PathValue(data.GroupID)
   course := r.PathValue(data.CourseID)
+
   msg := r.FormValue(data.Msg)
   token := r.FormValue(data.Token)
 
@@ -254,7 +281,7 @@ func EditMessage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   c_cols := data.CourseCols
   u_cols := data.UserCols
 
-  querry := fmt.Sprintf(`
+  query := fmt.Sprintf(`
     UPDATE %s AS m
     JOIN %s AS u ON m.%s=u.%s
     JOIN %s AS c ON m.%s=c.%s
@@ -267,12 +294,22 @@ func EditMessage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   m_cols.Msg,
   u_cols.GroupID, c_cols.CoName, u_cols.Login)
 
-  rows, err := db.Query(querry, msg, group, course, token)
+  res, err := db.Exec(query, msg, group, course, token)
   if err != nil {
-    log.Printf("| EditMessage: DB Query | Error ==> %s", err)
+    w.WriteHeader(http.StatusInternalServerError)
+    log.Printf("| EditMessage: DB Exec | Error ==> %s", err)
     return
   }
-  defer fmt.Println("EditMessage Row Closed")
-  defer rows.Close()
+  rowAdd, err := res.RowsAffected()
+  if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
+    log.Printf("| EditMessage: Exec RowsAdded | Error ==> %s", err)
+    return
+  }
+  if rowAdd<=0 {
+    w.WriteHeader(http.StatusNoContent)
+    return
+  }
 
+  w.WriteHeader(http.StatusAccepted)
 }
