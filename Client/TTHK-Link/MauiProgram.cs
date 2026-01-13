@@ -45,7 +45,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<TTHK_Link.Services.IThemeService, TTHK_Link.Services.ThemeService>();
         builder.Services.AddSingleton<TTHK_Link.ViewModels.ThemeViewModel>();
         builder.Services.AddTransient<TTHK_Link.Pages.ThemePage>();
-        
+        builder.Services.AddTransient<TTHK_Link.Pages.ProfilePage>();
         //shell
         builder.Services.AddSingleton<AppShell>();
         

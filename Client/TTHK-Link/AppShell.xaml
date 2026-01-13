@@ -155,6 +155,10 @@
                       ContentTemplate="{DataTemplate pages:ThemePage}" />
     </FlyoutItem>
     
+    <FlyoutItem Title="Профиль" Route="profile" FlyoutItemIsVisible="False">
+        <ShellContent Route="profile"
+                      ContentTemplate="{DataTemplate pages:ProfilePage}" />
+    </FlyoutItem>
 </Shell>
                   
        

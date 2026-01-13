@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TTHK_Link.Pages.ProfilePage"
+    Title="Профиль"
+    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#0B1424}">
+
+    <VerticalStackLayout Padding="16" Spacing="14">
+
+        <Frame Padding="16"
+               CornerRadius="18"
+               HasShadow="False"
+               BackgroundColor="{AppThemeBinding Light=#F2F2F7, Dark=#0F1B2D}">
+            <Grid ColumnDefinitions="70,*" ColumnSpacing="14">
+
+                <!-- Аватар (инициалы) -->
+                <Frame WidthRequest="64" HeightRequest="64"
+                       CornerRadius="32"
+                       HasShadow="False"
+                       BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#1E2A3D}"
+                       Padding="0">
+                    <Label Text="{Binding ProfileInitials}"
+                           FontAttributes="Bold"
+                           FontSize="22"
+                           TextColor="{AppThemeBinding Light=#111111, Dark=#FFFFFF}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+                </Frame>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                    <Label Text="{Binding FullName}"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#111111, Dark=#FFFFFF}" />
+
+                    <Label Text="{Binding GroupName, StringFormat='Группа: {0}'}"
+                           FontSize="13"
+                           TextColor="{AppThemeBinding Light=#6B7280, Dark=#9FB0C8}" />
+                </VerticalStackLayout>
+
+            </Grid>
+        </Frame>
+
+        <Button Text="Выйти"
+                HeightRequest="52"
+                CornerRadius="16"
+                BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#1E2A3D}"
+                TextColor="{AppThemeBinding Light=#111111, Dark=#FFFFFF}"
+                Command="{Binding LogoutCommand}" />
+
+    </VerticalStackLayout>
+</ContentPage>
