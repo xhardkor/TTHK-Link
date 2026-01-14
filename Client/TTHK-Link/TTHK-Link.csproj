@@ -86,5 +86,13 @@
         <Generator>MSBuild:Compile</Generator>
       </MauiXaml>
     </ItemGroup>
+    
+    <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))=='android' and '$(Configuration)' == 'Debug'">
+        <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
+    </PropertyGroup>
 
+    <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))=='android' and '$(Configuration)' == 'Debug'">
+        <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
+    </PropertyGroup>
+    
 </Project>

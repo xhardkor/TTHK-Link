@@ -55,7 +55,7 @@
                                    ReturnType="Next" />
                         </Border>
 
-                        <!-- Password -->
+                        <!-- Passwoвфывrd -->
                         <Label Text="Password"
                                FontSize="12"
                                TextColor="#C9D4E5"
