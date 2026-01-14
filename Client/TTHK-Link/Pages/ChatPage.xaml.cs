@@ -8,5 +8,6 @@ public partial class ChatPage : ContentPage
     {
         InitializeComponent();
         BindingContext = vm; // Seome ViewModeli lehega
-    }
+							 // test otherr pc
+	}
 }
