@@ -4,19 +4,35 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:TTHK_Link.Pages"
-    xmlns:local="clr-namespace:TTHK_Link"
-    Title="TTHK_Link">
+    Title="TTHK_Link"
+    FlyoutBehavior="{Binding FlyoutBehavior}">
 
+    <!-- auth pages (not shown in flyout) -->
     <ShellContent
         Route="login"
+        Title="Login"
+        Shell.FlyoutItemIsVisible="False"
         ContentTemplate="{DataTemplate pages:LoginPage}" />
 
     <ShellContent
-        Route="groups"
-        ContentTemplate="{DataTemplate pages:CoursePage}" />
+        Route="register"
+        Title="Register"
+        Shell.FlyoutItemIsVisible="False"
+        ContentTemplate="{DataTemplate pages:RegisterPage}" />
 
-    <ShellContent
-        Route="chat"
-        ContentTemplate="{DataTemplate pages:ChatPage}" />
+    <!-- main -->
+    <FlyoutItem Title="Courses" Route="courses" IsVisible="{Binding IsAuthenticated}">
+        <ShellContent ContentTemplate="{DataTemplate pages:CoursePage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Profile" Route="profile" IsVisible="{Binding IsAuthenticated}">
+        <ShellContent ContentTemplate="{DataTemplate pages:ProfilePage}" />
+    </FlyoutItem>
+
+    <Shell.FlyoutFooter>
+        <Grid Padding="12" IsVisible="{Binding IsAuthenticated}">
+            <Button Text="Logout" Command="{Binding LogoutCommand}" />
+        </Grid>
+    </Shell.FlyoutFooter>
 
 </Shell>

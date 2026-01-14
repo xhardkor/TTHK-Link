@@ -10,21 +10,21 @@ public class FakeCourseService : ICourseService
             new Course
             {
                 Id = "c1",
-                GroupId = "TiTge24",
+                GroupId = "TITge24",
                 CourseName = "Programmeerimise alused",
                 Description = "Tava vchat"
             },
             new Course
             {
                 Id = "c2",
-                GroupId = "TiTge24",
+                GroupId = "TITge24",
                 CourseName = "Võrgud",
                 Description = "Materjalid ja arutelud"
             },
             new Course
             {
                 Id = "c3",
-                GroupId = "TiTge24",
+                GroupId = "TITge24",
                 CourseName = "Andmebaasid",
                 Description = "Teine rühm"
             }

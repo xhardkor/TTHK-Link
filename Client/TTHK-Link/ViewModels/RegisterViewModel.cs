@@ -1,52 +1,56 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Text.RegularExpressions;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TTHK_Link.Models;
 using TTHK_Link.Services.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TTHK_Link.ViewModels;
 
-public partial class LoginViewModel : ObservableObject
+public partial class RegisterViewModel : ObservableObject
 {
     private readonly IAuthService _auth;
 
     [ObservableProperty] private string username = "";
     [ObservableProperty] private string password = "";
+    [ObservableProperty] private string groupId = "";
     [ObservableProperty] private string error = "";
 
-    public LoginViewModel(IAuthService auth)
+    public RegisterViewModel(IAuthService auth)
     {
         _auth = auth;
     }
 
     [RelayCommand]
-    public async Task LoginAsync()
+    private async Task RegisterAsync()
     {
         Error = "";
 
-        var ok = await _auth.LoginAsync(new LoginRequest
+        var ok = await _auth.RegisterAsync(new RegisterRequest
         {
             Username = Username,
-            Password = Password
+            Password = Password,
+            GroupId = GroupId
         });
 
         if (!ok)
         {
-            Error = "Kasutajat ei leitud või parool on vale.";
+            Error = "Registreerimine ebaõnnestus (kasutaja olemas või andmed puudu).";
             return;
         }
 
         var shellVm = App.Current?.Handler?.MauiContext?.Services.GetService<AppShellViewModel>();
         shellVm?.RefreshAuthState();
 
-        // Pärast edukat login'it suuname kursustele
+
         await Shell.Current.GoToAsync("//courses");
     }
 
-    [RelayCommand]
-    public async Task RegisterAsync()
-    {
-        Error = "";
-        await Shell.Current.GoToAsync("register");
-    }
 
+    [RelayCommand]
+    private async Task BackAsync()
+    {
+        // Tagasi login vaatesse
+        await Shell.Current.GoToAsync("//login");
+    }
 }
