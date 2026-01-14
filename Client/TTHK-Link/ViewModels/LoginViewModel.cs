@@ -35,8 +35,11 @@ public partial class LoginViewModel : ObservableObject
             return;
         }
 
+        var shellVm = App.Current?.Handler?.MauiContext?.Services.GetService<AppShellViewModel>();
+        shellVm?.RefreshAuthState();
+
         // Pärast edukat login'it suuname kursustele
-        await Shell.Current.GoToAsync("//groups");
+        await Shell.Current.GoToAsync("//courses");
     }
 
     [RelayCommand]

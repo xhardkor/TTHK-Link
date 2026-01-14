@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Text.RegularExpressions;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TTHK_Link.Models;
 using TTHK_Link.Services.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TTHK_Link.ViewModels;
 
@@ -37,9 +39,13 @@ public partial class RegisterViewModel : ObservableObject
             return;
         }
 
-        // Pärast registreerimist läheme kursustele
-        await Shell.Current.GoToAsync("//groups");
+        var shellVm = App.Current?.Handler?.MauiContext?.Services.GetService<AppShellViewModel>();
+        shellVm?.RefreshAuthState();
+
+
+        await Shell.Current.GoToAsync("//courses");
     }
+
 
     [RelayCommand]
     private async Task BackAsync()

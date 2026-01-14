@@ -1,7 +1,7 @@
-﻿using Java.Net;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TTHK_Link.Pages;
+using TTHK_Link.Services;
 using TTHK_Link.Services.Fake;
 using TTHK_Link.Services.Http;
 using TTHK_Link.Services.Interfaces;
@@ -29,17 +29,28 @@ public static class MauiProgram
             });
         // …
 
-        // services
+        // FAKE AUTH SERVICE
         //builder.Services.AddSingleton<IAuthService, FakeAuthService>();
 
+
+        builder.Services.AddTransient<HttpLoggingHandler>();
+
+        //// REAL AUTOH SERVICE
         builder.Services.AddHttpClient<ApiAuthService>(c =>
         {
             // Serveri aadress (sama mis Postmanis)
             c.BaseAddress = new Uri("http://172.20.10.2:8080");
-        });
+        }).AddHttpMessageHandler<HttpLoggingHandler>();
 
         builder.Services.AddSingleton<IAuthService>(sp =>
             sp.GetRequiredService<ApiAuthService>());
+
+        //menu shell
+        builder.Services.AddSingleton<AppShell>();
+        builder.Services.AddSingleton<AppShellViewModel>();
+        
+
+
 
         builder.Services.AddSingleton<ICourseService, FakeCourseService>();
         builder.Services.AddSingleton<IChatService, FakeChatService>();
@@ -57,9 +68,13 @@ public static class MauiProgram
         builder.Services.AddTransient<CoursePage>();
         builder.Services.AddTransient<ChatPage>();
         builder.Services.AddTransient<RegisterPage>();
+        builder.Services.AddTransient<ProfilePage>();
+
+        //session cache
+        builder.Services.AddSingleton<ISessionCache, SessionCache>();
 
 
-        System.Diagnostics.Debug.WriteLine($"REGISTER URL: {_http.BaseAddress}{url}");
+
 
 
 
