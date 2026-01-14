@@ -7,7 +7,7 @@ namespace TTHK_Link.ViewModels;
 
 public partial class LoginViewModel : ObservableObject
 {
-    private readonly IAuthService _authService;
+    private readonly IAuthService _auth;
 
     [ObservableProperty] private string username = "";
     [ObservableProperty] private string password = "";
@@ -16,18 +16,14 @@ public partial class LoginViewModel : ObservableObject
     // Veateade kasutajale (näitame lehel11111)
     [ObservableProperty] private string error = "";
 
-    public LoginViewModel(IAuthService authService)
+    public LoginViewModel(IAuthService auth)
     {
-        _authService = authService;
+        _auth = auth;
     }
 
     [RelayCommand]
-    private async Task LoginAsync()
+    public async Task LoginAsync()
     {
-        // Kui juba töötab, ei käivita uuesti
-        if (IsBusy) return;
-
-        IsBusy = true;
         Error = "";
 
         try
@@ -51,12 +47,28 @@ public partial class LoginViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            // Kui midagi läheb valesti (nt route puudub), näitame vea teksti
-            Error = ex.Message;
-        }
-        finally
+            Username = Username,
+            Password = Password
+        });
+
+        if (!ok)
         {
-            IsBusy = false;
+            Error = "Kasutajat ei leitud või parool on vale.";
+            return;
         }
+
+        var shellVm = App.Current?.Handler?.MauiContext?.Services.GetService<AppShellViewModel>();
+        shellVm?.RefreshAuthState();
+
+        // Pärast edukat login'it suuname kursustele
+        await Shell.Current.GoToAsync("//courses");
     }
+
+    [RelayCommand]
+    public async Task RegisterAsync()
+    {
+        Error = "";
+        await Shell.Current.GoToAsync("register");
+    }
+
 }

@@ -1,8 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
-using TTHK_Link.Services.Interfaces;
-using TTHK_Link.Services.Fake;
-using TTHK_Link.ViewModels;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using TTHK_Link.Pages;
+using TTHK_Link.Services;
+using TTHK_Link.Services.Fake;
+using TTHK_Link.Services.Http;
+using TTHK_Link.Services.Interfaces;
+using TTHK_Link.ViewModels;
+
 
 namespace TTHK_Link;
 
@@ -14,6 +18,8 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
 
 
+
+
         builder
             .UseMauiApp<App>()              // 
             .ConfigureFonts(fonts =>
@@ -23,8 +29,29 @@ public static class MauiProgram
             });
         // …
 
-        // services
-        builder.Services.AddSingleton<IAuthService, FakeAuthService>();
+        // FAKE AUTH SERVICE
+        //builder.Services.AddSingleton<IAuthService, FakeAuthService>();
+
+
+        builder.Services.AddTransient<HttpLoggingHandler>();
+
+        //// REAL AUTOH SERVICE
+        builder.Services.AddHttpClient<ApiAuthService>(c =>
+        {
+            // Serveri aadress (sama mis Postmanis)
+            c.BaseAddress = new Uri("http://172.20.10.2:8080");
+        }).AddHttpMessageHandler<HttpLoggingHandler>();
+
+        builder.Services.AddSingleton<IAuthService>(sp =>
+            sp.GetRequiredService<ApiAuthService>());
+
+        //menu shell
+        builder.Services.AddSingleton<AppShell>();
+        builder.Services.AddSingleton<AppShellViewModel>();
+        
+
+
+
         builder.Services.AddSingleton<ICourseService, FakeCourseService>();
         builder.Services.AddSingleton<IChatService, FakeChatService>();
         builder.Services.AddSingleton<IUserService, FakeUserService>();
@@ -36,6 +63,8 @@ public static class MauiProgram
         builder.Services.AddTransient<ChatViewModel>();
         builder.Services.AddSingleton<ChatListViewModel>();
         builder.Services.AddTransient<ChatListPage>();
+        builder.Services.AddTransient<RegisterViewModel>();
+
         // pages
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<CoursePage>();
@@ -49,6 +78,17 @@ public static class MauiProgram
         //shell
         builder.Services.AddSingleton<AppShell>();
         
+        builder.Services.AddTransient<RegisterPage>();
+        builder.Services.AddTransient<ProfilePage>();
+
+        //session cache
+        builder.Services.AddSingleton<ISessionCache, SessionCache>();
+
+
+
+
+
+
         return builder.Build();
     }
 }

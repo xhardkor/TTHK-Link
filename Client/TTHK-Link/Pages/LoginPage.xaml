@@ -80,6 +80,8 @@
                                TextColor="#FFB4B4"
                                FontSize="12"
                                Margin="0,4,0,0"/>
+        
+        <Button Text="Register" Command="{Binding RegisterCommand}" />
 
                         <!-- Login button -->
                         <Button Text="Login"

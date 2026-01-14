@@ -161,4 +161,36 @@
     </FlyoutItem>
 </Shell>
                   
-       
+ <!-- ======================================== -->      
+    Title="TTHK_Link"
+    FlyoutBehavior="{Binding FlyoutBehavior}">
+
+    <!-- auth pages (not shown in flyout) -->
+    <ShellContent
+        Route="login"
+        Title="Login"
+        Shell.FlyoutItemIsVisible="False"
+        ContentTemplate="{DataTemplate pages:LoginPage}" />
+
+    <ShellContent
+        Route="register"
+        Title="Register"
+        Shell.FlyoutItemIsVisible="False"
+        ContentTemplate="{DataTemplate pages:RegisterPage}" />
+
+    <!-- main -->
+    <FlyoutItem Title="Courses" Route="courses" IsVisible="{Binding IsAuthenticated}">
+        <ShellContent ContentTemplate="{DataTemplate pages:CoursePage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Profile" Route="profile" IsVisible="{Binding IsAuthenticated}">
+        <ShellContent ContentTemplate="{DataTemplate pages:ProfilePage}" />
+    </FlyoutItem>
+
+    <Shell.FlyoutFooter>
+        <Grid Padding="12" IsVisible="{Binding IsAuthenticated}">
+            <Button Text="Logout" Command="{Binding LogoutCommand}" />
+        </Grid>
+    </Shell.FlyoutFooter>
+
+</Shell>

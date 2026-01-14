@@ -24,3 +24,22 @@
              await GoToAsync("//login");
      }
  }
+ 
+
+ // <!-- ======================================== --> 
+﻿using TTHK_Link.Pages;
+
+namespace TTHK_Link;
+
+public partial class AppShell : Shell
+{
+    public AppShell(AppShellViewModel vm)
+    {
+        InitializeComponent();
+        BindingContext = vm;
+
+        Routing.RegisterRoute("chat", typeof(ChatPage));
+        Routing.RegisterRoute("register", typeof(RegisterPage));
+        Routing.RegisterRoute("profile", typeof(ProfilePage));
+    }
+}

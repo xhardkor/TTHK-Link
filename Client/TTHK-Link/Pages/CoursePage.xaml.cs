@@ -34,7 +34,7 @@ public partial class CoursePage : ContentPage
             var id = Uri.EscapeDataString(course.Id);
 
             // NB! Siin EI kasuta // ega ///, sest 'chat' on registreeritud route
-            await Shell.Current.GoToAsync($"Chat?courseId={id}");
+            await Shell.Current.GoToAsync($"chat?courseId={id}");
         }
         catch (Exception ex)
         {
