@@ -7,6 +7,51 @@
     Title="TTHK_Link"
     FlyoutBehavior="{Binding FlyoutBehavior}">
 
+    <!-- Header -->
+    <Shell.FlyoutHeader>
+        <Grid Padding="20"
+              BackgroundColor="#B61E2E"
+              RowDefinitions="Auto,Auto"
+              ColumnDefinitions="Auto,*"
+              ColumnSpacing="12">
+
+            
+            <!-- Avatar circle -->
+            <Frame WidthRequest="56"
+               HeightRequest="56"
+               CornerRadius="28"
+               BackgroundColor="#9E1A28"
+               HasShadow="False"
+               Padding="0"
+               VerticalOptions="Center">
+
+                <Grid>
+                    <Label Text="{Binding AvatarLetter}"
+                       TextColor="White"
+                       FontSize="30"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center" />    
+                </Grid>
+            </Frame>
+
+            <!-- Login -->
+            <VerticalStackLayout Grid.Column="1"
+                                 VerticalOptions="Center">
+                <Label Text="{Binding Login}"
+                       TextColor="White"
+                       FontSize="16"
+                       FontAttributes="Bold" />
+                <Label Text="{Binding StatusText}"
+                   TextColor="#FECACA"
+                   FontSize="12" />     
+
+            </VerticalStackLayout>
+        </Grid>
+    </Shell.FlyoutHeader>
+
     <!-- auth pages (not shown in flyout) -->
     <ShellContent
         Route="login"
@@ -21,18 +66,24 @@
         ContentTemplate="{DataTemplate pages:RegisterPage}" />
 
     <!-- main -->
-    <FlyoutItem Title="Courses" Route="courses" IsVisible="{Binding IsAuthenticated}">
-        <ShellContent ContentTemplate="{DataTemplate pages:CoursePage}" />
+    <FlyoutItem Title="News" Route="news" IsVisible="{Binding IsAuthenticated}" Icon="icon_news.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:NewsPage}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Profile" Route="profile" IsVisible="{Binding IsAuthenticated}">
+    <FlyoutItem Title="Group chat" Route="groupchat" IsVisible="{Binding IsAuthenticated}" Icon="icon_chat.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:GroupChatPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Courses" Route="courses" IsVisible="{Binding IsAuthenticated}" Icon="icon_courses.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:CoursesPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Profile" Route="profile" IsVisible="{Binding IsAuthenticated}" Icon="icon_profile.png">
         <ShellContent ContentTemplate="{DataTemplate pages:ProfilePage}" />
     </FlyoutItem>
 
-    <Shell.FlyoutFooter>
-        <Grid Padding="12" IsVisible="{Binding IsAuthenticated}">
-            <Button Text="Logout" Command="{Binding LogoutCommand}" />
-        </Grid>
-    </Shell.FlyoutFooter>
+    <FlyoutItem Title="Settings" Route="settings" IsVisible="{Binding IsAuthenticated}" Icon="icon_settings.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:SettingsPage}" />
+    </FlyoutItem>
 
 </Shell>

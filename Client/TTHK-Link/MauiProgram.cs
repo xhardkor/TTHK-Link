@@ -30,20 +30,20 @@ public static class MauiProgram
         // …
 
         // FAKE AUTH SERVICE
-        //builder.Services.AddSingleton<IAuthService, FakeAuthService>();
+        builder.Services.AddSingleton<IAuthService, FakeAuthService>();
 
 
         builder.Services.AddTransient<HttpLoggingHandler>();
 
-        //// REAL AUTOH SERVICE
-        builder.Services.AddHttpClient<ApiAuthService>(c =>
-        {
-            // Serveri aadress (sama mis Postmanis)
-            c.BaseAddress = new Uri("http://172.20.10.2:8080");
-        }).AddHttpMessageHandler<HttpLoggingHandler>();
+        ////// REAL AUTOH SERVICE
+        //builder.Services.AddHttpClient<ApiAuthService>(c =>
+        //{
+        //    // Serveri aadress (sama mis Postmanis)
+        //    c.BaseAddress = new Uri("http://172.20.10.2:8080");
+        //}).AddHttpMessageHandler<HttpLoggingHandler>();
 
-        builder.Services.AddSingleton<IAuthService>(sp =>
-            sp.GetRequiredService<ApiAuthService>());
+        //builder.Services.AddSingleton<IAuthService>(sp =>
+        //    sp.GetRequiredService<ApiAuthService>());
 
         //menu shell
         builder.Services.AddSingleton<AppShell>();
@@ -55,20 +55,42 @@ public static class MauiProgram
         builder.Services.AddSingleton<ICourseService, FakeCourseService>();
         builder.Services.AddSingleton<IChatService, FakeChatService>();
         builder.Services.AddSingleton<IUserService, FakeUserService>();
+        builder.Services.AddSingleton<ICourseTopicsService, FakeCourseTopicsService>();
+        builder.Services.AddSingleton<ITopicCommentsService, FakeTopicCommentsService>();
+        builder.Services.AddSingleton<INewsService, FakeNewsService>();
 
 
         // view models
         builder.Services.AddTransient<LoginViewModel>();
-        builder.Services.AddTransient<CourseViewModel>();
-        builder.Services.AddTransient<ChatViewModel>();
+        builder.Services.AddTransient<CoursesViewModel>();
+        //builder.Services.AddTransient<ChatViewModel>();
         builder.Services.AddTransient<RegisterViewModel>();
+        builder.Services.AddTransient<CourseTopicsViewModel>();
+        builder.Services.AddTransient<TopicChatViewModel>();
+        builder.Services.AddTransient<NewsViewModel>();
+
+
+
+
+
+
+
 
         // pages
         builder.Services.AddTransient<LoginPage>();
-        builder.Services.AddTransient<CoursePage>();
-        builder.Services.AddTransient<ChatPage>();
+        builder.Services.AddTransient<CoursesPage>();
+        //builder.Services.AddTransient<ChatPage>();
         builder.Services.AddTransient<RegisterPage>();
         builder.Services.AddTransient<ProfilePage>();
+        builder.Services.AddTransient<CoursesPage>();
+        builder.Services.AddTransient<CourseTopicsPage>();
+        builder.Services.AddTransient<TopicChatPage>();
+
+        builder.Services.AddTransient<GroupChatViewModel>();
+        builder.Services.AddTransient<GroupChatPage>();
+        builder.Services.AddTransient<NewsPage>();
+
+
 
         //session cache
         builder.Services.AddSingleton<ISessionCache, SessionCache>();

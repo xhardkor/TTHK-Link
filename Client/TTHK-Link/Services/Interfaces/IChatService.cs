@@ -4,8 +4,7 @@ namespace TTHK_Link.Services.Interfaces;
 
 public interface IChatService
 {
-    Task<List<Message>> GetMessagesAsync(string courseId);
+    Task<List<Message>> GetMessagesAsync(string roomId);
+    Task<Message> SendMessageAsync(string roomId, string userId, string msg);
 
-    // Uus: sõnumi saatmine
-    Task<Message> SendMessageAsync(string courseId, string userId, string msg);
 }

@@ -3,7 +3,7 @@
     public class Message
     {
         public string Id { get; set; }
-        public string CourseId { get; set; } // course id 
+        public string CourseId { get; set; } // course id or holder for group chat
         public string UserId { get; set; } // - 
 
         public string Msg { get; set; } //+
@@ -14,5 +14,5 @@
 
         //ui helper
         public bool IsMine { get; set; }
-    }   
+    }
 }

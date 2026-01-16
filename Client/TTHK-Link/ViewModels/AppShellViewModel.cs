@@ -14,6 +14,16 @@ public partial class AppShellViewModel : ObservableObject
     [ObservableProperty]
     private FlyoutBehavior flyoutBehavior;
 
+    [ObservableProperty]
+    private string login = "";
+
+    [ObservableProperty]
+    private string avatarLetter = "?";
+
+    [ObservableProperty]
+    private string statusText = "";
+
+
     public AppShellViewModel(IAuthService authService)
     {
         _authService = authService;
@@ -22,8 +32,18 @@ public partial class AppShellViewModel : ObservableObject
 
     public void RefreshAuthState()
     {
-        IsAuthenticated = _authService.CurrentUser != null;
-        FlyoutBehavior = IsAuthenticated ? FlyoutBehavior.Flyout : FlyoutBehavior.Disabled;
+        var user = _authService.CurrentUser;
+
+        IsAuthenticated = user != null;
+        FlyoutBehavior = IsAuthenticated
+            ? FlyoutBehavior.Flyout
+            : FlyoutBehavior.Disabled;
+
+        Login = user?.Login ?? "";
+        StatusText = user?.Status ?? "";
+        AvatarLetter = string.IsNullOrWhiteSpace(Login)
+            ? "?"
+            : Login[..1].ToUpperInvariant();
     }
 
     [RelayCommand]

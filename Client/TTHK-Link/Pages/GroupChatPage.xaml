@@ -1,0 +1,33 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TTHK_Link.Pages.GroupChatPage"
+    Title="Group chat">
+
+    <Grid RowDefinitions="*,Auto" Padding="12" RowSpacing="8">
+
+        <CollectionView Grid.Row="0" ItemsSource="{Binding Items}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="0,4">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="{Binding SenderName}" FontAttributes="Bold" />
+                            <Label Text="{Binding Msg}" />
+                            <Label Text="{Binding CreatedAt}" FontSize="10" Opacity="0.6" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+            <Entry Placeholder="Message..."
+                   Text="{Binding NewMessageText}"
+                   HorizontalOptions="FillAndExpand" />
+            <Button Grid.Column="1"
+                    Text="Send"
+                    Command="{Binding SendMessageCommand}" />
+        </Grid>
+
+    </Grid>
+</ContentPage>

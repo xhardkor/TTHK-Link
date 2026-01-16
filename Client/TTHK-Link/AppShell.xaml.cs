@@ -10,8 +10,11 @@ public partial class AppShell : Shell
         InitializeComponent();
         BindingContext = vm;
 
-        Routing.RegisterRoute("chat", typeof(ChatPage));
+        //Routing.RegisterRoute("chat", typeof(ChatPage));
         Routing.RegisterRoute("register", typeof(RegisterPage));
         Routing.RegisterRoute("profile", typeof(ProfilePage));
+        Routing.RegisterRoute("courseTopics", typeof(CourseTopicsPage));
+        Routing.RegisterRoute("topicChat", typeof(TopicChatPage));
+        Routing.RegisterRoute("news", typeof(NewsPage));
     }
 }

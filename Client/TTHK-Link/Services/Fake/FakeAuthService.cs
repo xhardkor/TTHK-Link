@@ -14,10 +14,13 @@ public class FakeAuthService : IAuthService
             Id = "1",
             Login = "admin",
             IsAdmin = true,
-            GroupId = "TiTge24"
+            GroupId = "TITge24",
+            Status = "🙂 Online"
         };
 
         _users["admin"] = ("admin", adminUser);
+
+
     }
 
     public Task<bool> LoginAsync(LoginRequest request)
