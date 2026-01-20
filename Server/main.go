@@ -14,8 +14,8 @@ import (
 	//"github.com/gorilla/websocket"
 
 	// Config Directories
-	"udlib/data"
-	"udlib/funclib"
+	"ml/data"
+	"ml/funclib"
 
 	// Database
 	"database/sql"
@@ -66,7 +66,7 @@ func main() {
     funclib.PostAuth(w, r, db)
   })
   // give all info user has (w/o courses)[also it gives Token]
-  mux.HandleFunc("GET /user/info", func(w http.ResponseWriter, r *http.Request) {
+  mux.HandleFunc("GET /auth", func(w http.ResponseWriter, r *http.Request) {
     funclib.GetUserInfo(w, r, db)
   })
   // give all Courses from a user(id)
@@ -82,7 +82,7 @@ func main() {
     funclib.EditMessage(w, r, db)
   })
   // write a message 
-  mux.HandleFunc("POST /message/{id}", func(w http.ResponseWriter, r *http.Request) {
+  mux.HandleFunc("POST /message", func(w http.ResponseWriter, r *http.Request) {
   })
   // delete a message 
   mux.HandleFunc("DELETE /message/{id}", func(w http.ResponseWriter, r *http.Request) {

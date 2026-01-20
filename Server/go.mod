@@ -1,4 +1,4 @@
-module udlib
+module ml
 
 go 1.25.0
 
