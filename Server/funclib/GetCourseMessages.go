@@ -42,13 +42,13 @@ func GetCourseMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   row, err := db.Query(query, group_id, course_id)
   if err != nil {
     w.WriteHeader(http.StatusInternalServerError)
-    log.Printf("| GetCourseMessages: DB Querry | Error ==> %s\n", err)
+    log.Printf("| GetCourseMessages: DB Query | Error ==> %s\n", err)
     return
   }
   defer fmt.Println("GetCourseMessages Row Closed")
   defer row.Close()
 
-  // Creating and Using JSON format
+  //JSON: Creating and Using JSON format
   var msgs []data.MessageJSON
   for row.Next() {
     var msg data.MessageJSON
@@ -61,8 +61,7 @@ func GetCourseMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   }
   marsh, err := json.Marshal(msgs)
   if err != nil {
-    w.WriteHeader(http.StatusInternalServerError)
-    log.Printf("| GetCourseMessages: JSON Marshal | Error ==> %s\n", err)
+    InternalError(w, "| GetCourseMessages: JSON Marshal | Error ==> %s\n", err)
     return
   }
   w.WriteHeader(http.StatusOK)

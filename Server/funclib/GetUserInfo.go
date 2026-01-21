@@ -42,9 +42,13 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   }
   
   //F: Check/Generate Token
-  if !tk.Check(username) {
-    err := tk.Create(username, hash_password)
-    if err!=nil {
+  exist, err := tk.Check(username)
+  if err!=nil {
+    InternalError(w, "| GetUserInfo: Token Check | Error ==> %s\n", err)
+    return
+  }
+  if !exist {
+    if err := tk.Create(username, hash_password); err!=nil {
       InternalError(w, "| GetUserInfo: Token- Create | Error ==> %s\n", err)
       return
     }

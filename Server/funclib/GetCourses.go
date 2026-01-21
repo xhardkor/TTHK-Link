@@ -19,15 +19,7 @@ func GetCourses(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   defer fmt.Println("GetCourses: Request Body Closed")
   defer r.Body.Close()
 
-  token := r.FormValue(data.Token)
-  //username := r.FormValue(data.Login)
-  /*
-  _, ex := CheckToken(username, []byte(token), db)
-  // NOT FINISHED
-  if !ex {
-    w.WriteHeader(http.StatusInternalServerError)
-    return
-  }*/
+  token := r.FormValue(data.ID)
 
   c_cols := data.CourseCols
   u_cols := data.UserCols

@@ -21,12 +21,12 @@ func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   defer fmt.Println("PostAuth: Request Body Closed")
   defer r.Body.Close()
 
-  // Getting data from our request
+  //K: Getting data from our request
   username := r.FormValue(data.Login)
   password := r.FormValue(data.Password)
   group_id := r.FormValue(data.GroupID)
 
-  // Checking if some requests are NULL
+  //K: Checking if some requests are NULL
   if username == "" || password == "" || group_id == "" {
     log.Printf("username:|%s|\tpassword:|%s|\tgroup_id:|%s|\n", username, password, group_id)
     tmp := struct {
@@ -49,7 +49,7 @@ func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
     return
   }
 
-  // Cheking if Username already exists
+  //K: Cheking if Username already exists
   ex, err := userCheck(username, db)
   if err != nil {
     log.Printf("| PostAuth: Username check | Error ==> %s\n", err)
@@ -62,12 +62,12 @@ func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
     return
   }
 
-  // Hash for password
+  //K: Hash for password
   var hash_password []byte
   var psw Password = &passImpl{db: db, hash_ps: &hash_password}
   psw.Hash(password)
 
-  // Insert data into DB
+  //K: Insert data into DB
   cols := data.UserCols
   query := fmt.Sprintf(`
     INSERT INTO %s (%s, %s, %s, %s)
@@ -93,7 +93,7 @@ func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
     return
   }
 
-  // Automatically gives Token 
+  //K: Automatically gives Token 
   var token []byte
   var tk Token = &tokenImpl{db: db, token: &token}
   err = tk.Create(username, hash_password)
@@ -102,8 +102,21 @@ func PostAuth(w http.ResponseWriter, r *http.Request, db *sql.DB) {
     return
   }
   
-  // Send token via JSON
-  tmp := struct{ Token []byte `json:"token"`}{Token: token}
+  //K: Getting user id from DB
+  u_cols := data.UserCols
+  query = fmt.Sprintf("SELECT u.%s FROM %s AS u WHERE u.%s=?", u_cols.ID, data.User_Table, u_cols.Login)
+  var userid string
+  if err := db.QueryRow(query, username).Scan(&userid); err!=nil {
+    InternalError(w, "| PostAuth: User ID | Error ==> %s\n", err)
+    return
+  }
+
+  //K: Send token and ID via JSON
+  tmp := struct{ 
+    Token []byte `json:"token"`
+    ID string `json:"user_id"`
+  }{ Token: token, ID: userid }
+
   marsh, err := json.Marshal(tmp)
   if err != nil {
     w.WriteHeader(http.StatusInternalServerError)

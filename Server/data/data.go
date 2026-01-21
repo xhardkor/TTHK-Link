@@ -26,6 +26,7 @@ const (
   CourseID = "course_id"
   Msg = "msg"
   Token = "token"
+  RoomID = "room_id"
 )
 
 // Structs:
@@ -33,7 +34,7 @@ const (
 // Const variable for User_Table
 const User_Table = "user_t"
 type user_t struct {
-  ID, Login, Password, IsAdmin, GroupID, Created string
+  ID, Login, Password, IsAdmin, GroupID, Created, Status, ImageURL string
 }
 var UserCols = user_t{
   ID: "ID",
@@ -42,6 +43,8 @@ var UserCols = user_t{
   IsAdmin: "IsAdmin",
   GroupID: "GroupID",
   Created: "Created",
+  Status: "Status",
+  ImageURL: "ImageURL",
 }
 
 
@@ -61,7 +64,7 @@ var CourseCols = course_t{
 // Message_Table
 const Message_Table = "message_t"
 type message_t struct {
-  ID, Created, Msg, UserID, CourseID string
+  ID, Created, Msg, UserID, CourseID, RoomID string
 }
 var MessageCols = message_t{
   ID: "ID",
@@ -69,6 +72,7 @@ var MessageCols = message_t{
   Msg: "Msg",
   UserID: "UserID",
   CourseID: "CourseID",
+  RoomID: "RoomID",
 }
 
 
@@ -103,8 +107,10 @@ type CourseJSON struct {
 type MessageJSON struct {
   ID          int     `json:"id,omitempty"`
   Created     string  `json:"created,omitempty"`
-  Msg         string  `json:"desc,omitempty"`
-  CourseName  string  `json:"name,omitempty"`
+  Msg         string  `json:"msg,omitempty"`
   UserID      string  `json:"user_id,omitempty"`
   GroupID     string  `json:"group_id,omitempty"`
+  CourseID    int     `json:"course_id,omitempty"`
+  RoomID      string  `json:"room_id,omitempty"`
+  User        UserJSON`json:"user"`
 }

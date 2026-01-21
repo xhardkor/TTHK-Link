@@ -30,7 +30,7 @@ func InternalError(w http.ResponseWriter, msg string, err error) {
 //MAIN: Interface for Tokens
 type Token interface {
   Create(user string, hs_psw []byte) (null error)
-  Check(user string) (exist bool)
+  Check(user string) (exist bool, err error)
   Get(r *http.Request) (decode error)
 }
 type tokenImpl struct{
@@ -50,7 +50,7 @@ func (t *tokenImpl) Create(user string, hs_psw []byte) (null error) {
 
   // Generates Token
   h := sha256.New()
-  tn := time.Now().Add(10 * time.Minute)
+  tn := time.Now().Add(10 * time.Minute).UTC()
   h.Write([]byte(user + string(hs_psw) + tn.GoString() + data.Salt))
   token := h.Sum(nil)
   *t.token = token
@@ -62,7 +62,7 @@ func (t *tokenImpl) Create(user string, hs_psw []byte) (null error) {
     VALUES (?, ?, ?)
   `,
   data.Token_Table, t_cols.UserName, t_cols.Token, t_cols.Time)
-  res, err := db.Exec(query, user, token, time.Now())
+  res, err := db.Exec(query, user, token, tn)
   if err != nil {
     return err
   }
@@ -78,31 +78,48 @@ func (t *tokenImpl) Create(user string, hs_psw []byte) (null error) {
 }
 
 //F: Checks token for a current session using interface
-func (t *tokenImpl) Check(user string) (exist bool) {
+func (t *tokenImpl) Check(user string) (exist bool, err error) {
 
   db := t.db
   t_cols := data.TokenCols
   u_cols := data.UserCols
 
-  querry := fmt.Sprintf(`
+  query := fmt.Sprintf(`
     SELECT t.%s FROM %s AS t
     JOIN %s AS u ON t.%s=u.%s
-    WHERE t.%s=? AND t.%s=?
+    WHERE t.%s=?
   `,
   t_cols.Time, data.Token_Table,
   data.User_Table, t_cols.UserName, u_cols.Login,
-  t_cols.UserName, t_cols.Token)
+  t_cols.UserName)
 
-  ////XXX: NOT FINISHED
+  //OK:
   var tokenTime string
-  if err := db.QueryRow(querry, user, *t.token).Scan(&tokenTime); err != nil {
-    log.Printf("| Token- Check: DB Query | Error ==> %s\n", err)
-    fmt.Println(tokenTime)
-    return false
-  }
-  fmt.Println(tokenTime)
 
-  return true
+  if err := db.QueryRow(query, user).Scan(&tokenTime); err != nil {
+    log.Printf("| No result, because ==> %s\n", err) // No result because there is no token
+    return false, nil
+  }
+
+  now := time.Now().UTC().Unix()
+  tkTime, err := time.Parse(time.RFC3339, tokenTime)
+  if err!=nil {
+    log.Printf("| Token- Check: Time Parse | Error ==> %s\n", err)
+    return false, err
+  }
+
+  if now>=tkTime.Unix() {
+    del := fmt.Sprintf("DELETE FROM %s AS t WHERE t.%s=?", data.Token_Table, t_cols.UserName)
+    res, err := db.Exec(del, user)
+    if err!=nil {
+      return false, err
+    }
+    aga, _ := res.RowsAffected()
+    fmt.Println("affected: ", aga)
+    return false, nil
+  }
+
+  return true, nil
 }
 
 //F: Get Token from the Body of the Request 
@@ -115,8 +132,6 @@ func (t *tokenImpl) Get(r *http.Request) (decode error) {
   *t.token = tok.Token
   return nil
 }
-
-
 
 
 //MAIN: Interface for Passwords
