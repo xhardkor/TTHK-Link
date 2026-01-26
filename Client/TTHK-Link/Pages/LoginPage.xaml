@@ -4,16 +4,38 @@
     xmlns:vm="clr-namespace:TTHK_Link.ViewModels"
     x:Class="TTHK_Link.Pages.LoginPage">
 
-    <VerticalStackLayout Padding="20" Spacing="12">
+    <VerticalStackLayout Padding="20" Spacing="16">
 
-        <Entry Placeholder="Username" Text="{Binding Username}" />
-        <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}" />
+        <Label Text="Login"
+               FontSize="24"
+               FontAttributes="Bold" />
 
-        <!-- Veateade kasutajale -->
-        <Label Text="{Binding Error}" TextColor="Red" />
+        <Frame Style="{StaticResource Card}">
+            <VerticalStackLayout Spacing="12">
 
-        <Button Text="Login" Command="{Binding LoginCommand}" />
-        <Button Text="Register" Command="{Binding RegisterCommand}" />
+                <Entry Placeholder="Username"
+                       Style="{StaticResource Input}"
+                       Text="{Binding Username}" />
+
+                <Entry Placeholder="Password"
+                       Style="{StaticResource Input}"
+                       IsPassword="True"
+                       Text="{Binding Password}" />
+
+                <Label Text="{Binding Error}"
+                       TextColor="Red"
+                       FontSize="12" />
+
+                <Button Text="Login"
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding LoginCommand}" />
+
+                <Button Text="Register"
+                        Style="{StaticResource OutlineButton}"
+                        Command="{Binding RegisterCommand}" />
+
+            </VerticalStackLayout>
+        </Frame>
 
     </VerticalStackLayout>
 </ContentPage>
