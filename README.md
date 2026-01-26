@@ -1,14 +1,17 @@
 # TTHK-Link
 
-Õppeprojekt .NET MAUI-ga, mis demonstreerib MVVM arhitektuuri.
+TTHK-Link on .NET MAUI õppeprojekt, mis demonstreerib MVVM arhitektuuri.
 
 ## Funktsioonid
-- Kasutaja autentimine (admin/admin)
-- Kursuste vaatamine vastavalt grupile
-- Kursusepõhine chat
+- Kasutaja autentimine (admin/admin)  
+- Uudiste vaatamine  
+- Rühmavestlus  
+- Kursuste vaatamine vastavalt grupile  
+- Kursuste teemad ja kommentaarid  
 
 ## Kasutatud
-- .NET MAUI
-- Shell navigatsioon
-- Dependency Injection
-- Fake teenused (Auth, Courses, Chat)
+- .NET MAUI  
+- MVVM (CommunityToolkit)  
+- Shell navigatsioon  
+- Dependency Injection  
+- Fake teenused (Auth, Courses, Chat, News)
