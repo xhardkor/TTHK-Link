@@ -5,8 +5,46 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:TTHK_Link.Pages"
     Title="TTHK_Link"
-    FlyoutBehavior="{Binding FlyoutBehavior}">
+    FlyoutBehavior="{Binding FlyoutBehavior}"
+    Shell.BackgroundColor="#B61E2E"
+    Shell.TitleColor="White"
+    Shell.ForegroundColor="White"
+    Shell.NavBarHasShadow="False">
+    
+    <Shell.ItemTemplate>
+        <DataTemplate>
+            <Grid
+                Padding="16,12"
+                ColumnDefinitions="Auto,*"
+                ColumnSpacing="16">
 
+                <!-- Menu icon -->
+                <Image
+                    Source="{Binding Icon}"
+                    WidthRequest="24"
+                    HeightRequest="24"
+                    VerticalOptions="Center" />
+
+                <!-- Menu title -->
+                <Label
+                    Grid.Column="1"
+                    Text="{Binding Title}"
+                    FontSize="20"
+                    TextColor="#111111"
+                    VerticalOptions="Center" />
+            </Grid>
+        </DataTemplate>
+    </Shell.ItemTemplate>
+    
+    <Shell.Resources>
+        <Style TargetType="Element">
+            <!-- Flyout background -->
+            <Setter Property="Shell.FlyoutBackgroundColor" Value="White" />
+        </Style>
+           
+    </Shell.Resources>
+    
+    
     <!-- Header -->
     <Shell.FlyoutHeader>
         <Grid Padding="20"
@@ -66,24 +104,47 @@
         ContentTemplate="{DataTemplate pages:RegisterPage}" />
 
     <!-- main -->
-    <FlyoutItem Title="News" Route="news" IsVisible="{Binding IsAuthenticated}" Icon="icon_news.png">
+    <FlyoutItem Title="News" Route="news" IsVisible="{Binding IsAuthenticated}" Icon="news.png">
         <ShellContent ContentTemplate="{DataTemplate pages:NewsPage}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Group chat" Route="groupchat" IsVisible="{Binding IsAuthenticated}" Icon="icon_chat.png">
+    <FlyoutItem Title="Group chat" Route="groupchat" IsVisible="{Binding IsAuthenticated}" Icon="chat.png">
         <ShellContent ContentTemplate="{DataTemplate pages:GroupChatPage}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Courses" Route="courses" IsVisible="{Binding IsAuthenticated}" Icon="icon_courses.png">
+    <FlyoutItem Title="Courses" Route="courses" IsVisible="{Binding IsAuthenticated}" Icon="school.png">
         <ShellContent ContentTemplate="{DataTemplate pages:CoursesPage}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Profile" Route="profile" IsVisible="{Binding IsAuthenticated}" Icon="icon_profile.png">
+    <FlyoutItem Title="Profile" Route="profile" IsVisible="{Binding IsAuthenticated}" Icon="account.png">
         <ShellContent ContentTemplate="{DataTemplate pages:ProfilePage}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Settings" Route="settings" IsVisible="{Binding IsAuthenticated}" Icon="icon_settings.png">
+    <FlyoutItem Title="Settings" Route="settings" IsVisible="{Binding IsAuthenticated}" Icon="settings.png">
         <ShellContent ContentTemplate="{DataTemplate pages:SettingsPage}" />
     </FlyoutItem>
+    
+    <!-- Flyout footer -->
+    <Shell.FlyoutFooter>
+        <Grid Padding="16">
+            <Frame
+                CornerRadius="14"
+                BorderColor="#E5E7EB"
+                HasShadow="False"
+                Padding="0">
+
+                <!-- Logout button -->
+                <Button
+                    Text="Logout"
+                    BackgroundColor="Transparent"
+                    TextColor="#B61E2E"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    HeightRequest="52"
+                    HorizontalOptions="Fill" />
+
+            </Frame>
+        </Grid>
+    </Shell.FlyoutFooter>
 
 </Shell>
