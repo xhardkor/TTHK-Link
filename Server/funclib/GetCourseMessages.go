@@ -14,7 +14,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// GET MESSAGES
+// GET MESSAGES FROM Courses
 func GetCourseMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
   defer fmt.Println("GetCourseMessages: Request Body Closed")
   defer r.Body.Close()
@@ -24,6 +24,7 @@ func GetCourseMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
   // TOKEN CHECKER => FUTURE
 
+//DB:
   m_cols := data.MessageCols
   c_cols := data.CourseCols
   u_cols := data.UserCols
@@ -64,8 +65,6 @@ func GetCourseMessages(w http.ResponseWriter, r *http.Request, db *sql.DB) {
     InternalError(w, "| GetCourseMessages: JSON Marshal | Error ==> %s\n", err)
     return
   }
-  w.WriteHeader(http.StatusOK)
-  w.Write(marsh)
-
+  InternalOK(w, marsh)
 }
 

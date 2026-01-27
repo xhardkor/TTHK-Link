@@ -6,7 +6,7 @@ var DB_Dir string = "ignored/db_guard.json"
 // Token Salt
 const Salt = "SOME_OF_SALT"
 
-// DB config struct
+//DB: config struct
 type DBConfig struct {
   DBUser string `json:"db_user"`
   DBPass string `json:"db_pass"`
@@ -88,8 +88,7 @@ var TokenCols = token_t{
 }
 
 
-// JSON Structs:
-
+//JSON: JSON Structs:
 type UserJSON struct {
   ID        int     `json:"id,omitempty"`
   User      string  `json:"user,omitempty"`

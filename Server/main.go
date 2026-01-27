@@ -25,7 +25,7 @@ import (
 
 
 func main() {
-  // JSON file reading and Formating
+//JSON: JSON file reading and Formating
   readFile, err := os.ReadFile(data.DB_Dir)
   if err != nil {
     log.Printf("MAIN: OS Read File | Error ==> %s", err)
@@ -39,7 +39,7 @@ func main() {
   }
 
 
-  // Connect to DB (DSN = Data Source Name)
+//DB: Connect to DB (DSN = Data Source Name)
   dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true&timeout=5s", 
       dbConf.DBUser, dbConf.DBPass, dbConf.DBHost, dbConf.DBPort, dbConf.DBName,
   )
@@ -57,8 +57,7 @@ func main() {
   defer db.Close()
 
 
-
-  //K: Server Handler and Listener 
+//K: Server Handler and Listener 
   mux := http.NewServeMux()
 
 
@@ -70,25 +69,23 @@ func main() {
   mux.HandleFunc("GET /auth", func(w http.ResponseWriter, r *http.Request) {
     funclib.GetUserInfo(w, r, db)
   })
-  //WARN: give all Courses from a user(id)
-  mux.HandleFunc("GET /user/courses", func(w http.ResponseWriter, r *http.Request) {
-    funclib.GetCourses(w, r, db)
-  })
-//NK: edit a message 
-  mux.HandleFunc("PATCH /message/{group_id}/{course_id}", func(w http.ResponseWriter, r *http.Request) {
-    funclib.EditMessage(w, r, db)
-  })
 //K: write a message 
   mux.HandleFunc("POST /message", func(w http.ResponseWriter, r *http.Request) {
     funclib.PostMessage(w,r,db)
-  })
-//NK: delete a message 
-  mux.HandleFunc("DELETE /message/{id}", func(w http.ResponseWriter, r *http.Request) {
   })
 //K: get messages
   mux.HandleFunc("GET /messages/{room_id}/{course_id}", func(w http.ResponseWriter, r *http.Request) {
     funclib.GetMessages(w,r,db)
   })
+//K: get groups
+  mux.HandleFunc("GET /groups", func(w http.ResponseWriter, r *http.Request) {
+    funclib.GetGroups(w,r,db)
+  })
+//WARN: give all Courses from a user(id)
+  mux.HandleFunc("GET /user/courses", func(w http.ResponseWriter, r *http.Request) {
+    funclib.GetCourses(w, r, db)
+  })
+
 
 //K: Server listen and serve
   err = http.ListenAndServe(":8080", mux)

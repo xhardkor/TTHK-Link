@@ -17,12 +17,20 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// internal error handler
+//F: internal error handler
 func InternalError(w http.ResponseWriter, msg string, err error) {
   log.Printf(msg, err)
   http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
-
+//F: internal OK handler
+func InternalOK(w http.ResponseWriter, data []byte) {
+  w.WriteHeader(http.StatusOK)
+  w.Write(data)
+}
+//F: internal NULL
+func InternalNULL(w http.ResponseWriter) {
+  w.WriteHeader(http.StatusContinue)
+}
 
 
 //// Interfaces
