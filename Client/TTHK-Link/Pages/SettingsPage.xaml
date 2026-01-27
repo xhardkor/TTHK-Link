@@ -6,7 +6,7 @@
 
     <ScrollView>
         <VerticalStackLayout Spacing="14">
-
+          
             <!-- Appearance -->
             <Frame Style="{StaticResource Card}">
                 <VerticalStackLayout Spacing="12">
@@ -17,23 +17,15 @@
                         FontAttributes="Bold"
                         TextColor="{StaticResource PrimaryTextColor}" />
 
-                    <Grid ColumnDefinitions="*,Auto">
+                    <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
                         <Label
                             Text="Dark mode"
                             FontSize="14"
                             TextColor="{StaticResource PrimaryTextColor}" />
-                        <Switch Grid.Column="1" />
-                    </Grid>
 
-                    <Grid ColumnDefinitions="*,Auto">
-                        <Label
-                            Text="Language"
-                            FontSize="14"
-                            TextColor="{StaticResource PrimaryTextColor}" />
-                        <Label
+                        <Switch
                             Grid.Column="1"
-                            Text="English"
-                            TextColor="{StaticResource SecondaryTextColor}" />
+                            IsToggled="{Binding IsDarkMode}" />
                     </Grid>
 
                 </VerticalStackLayout>
@@ -50,48 +42,36 @@
                         TextColor="{StaticResource PrimaryTextColor}" />
 
                     <Grid ColumnDefinitions="*,Auto">
-                        <Label
-                            Text="Push notifications"
-                            FontSize="14"
-                            TextColor="{StaticResource PrimaryTextColor}" />
-                        <Switch Grid.Column="1" />
+                        <Label Text="Push notifications" FontSize="14" />
+                        <Switch Grid.Column="1"
+                                IsToggled="{Binding PushNotifications}" />
                     </Grid>
 
                     <Grid ColumnDefinitions="*,Auto">
-                        <Label
-                            Text="Email notifications"
-                            FontSize="14"
-                            TextColor="{StaticResource PrimaryTextColor}" />
-                        <Switch Grid.Column="1" />
+                        <Label Text="Email notifications" FontSize="14" />
+                        <Switch Grid.Column="1"
+                                IsToggled="{Binding EmailNotifications}" />
                     </Grid>
 
                 </VerticalStackLayout>
             </Frame>
 
-            <!-- App info -->
+            <!-- Language -->
             <Frame Style="{StaticResource Card}">
-                <VerticalStackLayout Spacing="8">
-
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
                     <Label
-                        Text="About"
-                        FontSize="16"
-                        FontAttributes="Bold"
+                        Text="Language"
+                        FontSize="14"
                         TextColor="{StaticResource PrimaryTextColor}" />
 
-                    <Grid ColumnDefinitions="*,Auto">
-                        <Label
-                            Text="Version"
-                            FontSize="14"
-                            TextColor="{StaticResource SecondaryTextColor}" />
-                        <Label
-                            Grid.Column="1"
-                            Text="1.0.0"
-                            FontSize="14"
-                            TextColor="{StaticResource PrimaryTextColor}" />
-                    </Grid>
-
-                </VerticalStackLayout>
+                    <Label
+                        Grid.Column="1"
+                        Text="{Binding Language}"
+                        FontSize="14"
+                        TextColor="{StaticResource SecondaryTextColor}" />
+                </Grid>
             </Frame>
+           
 
         </VerticalStackLayout>
     </ScrollView>
