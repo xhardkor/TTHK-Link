@@ -3,15 +3,18 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TTHK_Link.Models;
 using TTHK_Link.Services.Interfaces;
+using MauiApp = Microsoft.Maui.Controls.Application;
 
 namespace TTHK_Link.ViewModels;
 
+[QueryProperty(nameof(CourseId), "courseId")]
 [QueryProperty(nameof(TopicId), "topicId")]
 public partial class TopicChatViewModel : ObservableObject
 {
     private readonly IAuthService _auth;
-    private readonly ITopicCommentsService _svc;
+    private readonly IChatService _chat;
 
+    [ObservableProperty] private string courseId = "";
     [ObservableProperty] private string topicId = "";
     [ObservableProperty] private string error = "";
     [ObservableProperty] private string newMessage = "";
@@ -19,10 +22,20 @@ public partial class TopicChatViewModel : ObservableObject
 
     public ObservableCollection<TopicComment> Items { get; } = new();
 
-    public TopicChatViewModel(IAuthService auth, ITopicCommentsService svc)
+    public TopicChatViewModel(IAuthService auth, IChatService chat)
     {
         _auth = auth;
-        _svc = svc;
+        _chat = chat;
+    }
+
+    private string GetRoomId()
+    {
+        return string.IsNullOrWhiteSpace(CourseId) ? "" : $"course:{CourseId}";
+    }
+
+    private bool TryGetTopicInt(out int tid)
+    {
+        return int.TryParse(TopicId, out tid) && tid > 0;
     }
 
     [RelayCommand]
@@ -30,20 +43,46 @@ public partial class TopicChatViewModel : ObservableObject
     {
         if (IsBusy) return;
         IsBusy = true;
+
         Error = "";
         Items.Clear();
 
         try
         {
-            if (string.IsNullOrWhiteSpace(TopicId))
+            if (string.IsNullOrWhiteSpace(CourseId))
             {
-                Error = "TopicId missing.";
+                Error = "CourseId missing.";
                 return;
             }
 
-            var list = await _svc.GetCommentsAsync(TopicId);
-            foreach (var c in list)
-                Items.Add(c);
+            if (string.IsNullOrWhiteSpace(TopicId) || !TryGetTopicInt(out var tid))
+            {
+                Error = "TopicId invalid.";
+                return;
+            }
+
+            var roomId = GetRoomId();
+            if (string.IsNullOrWhiteSpace(roomId))
+            {
+                Error = "RoomId missing.";
+                return;
+            }
+
+            var msgs = await _chat.GetMessagesAsync(roomId, tid);
+
+            foreach (var m in msgs)
+            {
+                Items.Add(new TopicComment
+                {
+                    Id = m.Id,
+                    TopicId = TopicId,
+                    UserId = m.UserId,
+                    AuthorLogin = m.SenderName, 
+                    Text = m.Msg,
+                    CreatedAt = m.CreatedAt
+                });
+
+            }
         }
         catch (Exception ex)
         {
@@ -66,17 +105,32 @@ public partial class TopicChatViewModel : ObservableObject
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(TopicId))
+        if (string.IsNullOrWhiteSpace(CourseId))
         {
-            Error = "TopicId missing.";
+            Error = "CourseId missing.";
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(NewMessage))
+        if (string.IsNullOrWhiteSpace(TopicId) || !TryGetTopicInt(out var tid))
+        {
+            Error = "TopicId invalid.";
             return;
+        }
 
-        await _svc.AddCommentAsync(TopicId, NewMessage, user);
-        NewMessage = "";
-        await LoadAsync();
+        var text = (NewMessage ?? "").Trim();
+        if (text.Length == 0) return;
+
+        try
+        {
+            var roomId = GetRoomId();
+            await _chat.SendMessageAsync(roomId, tid, user.Id, text);
+            NewMessage = "";
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex);
+            await MauiApp.Current!.MainPage!.DisplayAlert("Error", "Comment send failed.", "OK");
+        }
     }
 }

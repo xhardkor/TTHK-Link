@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TTHK_Link.Models;
 using TTHK_Link.Services.Interfaces;
-using static System.Net.Mime.MediaTypeNames;
 using MauiApp = Microsoft.Maui.Controls.Application;
-
 
 namespace TTHK_Link.ViewModels;
 
@@ -15,23 +11,27 @@ public partial class GroupChatViewModel : ObservableObject
 {
     private readonly IChatService _chat;
     private readonly IAuthService _auth;
-    private readonly IUserService _users;
+    private DateTime _lastSeen = DateTime.MinValue;
+    private readonly HashSet<string> _seenIds = new();
+
 
     public ObservableCollection<Message> Items { get; } = new();
 
     [ObservableProperty] private string error = "";
     [ObservableProperty] private string newMessageText = "";
     [ObservableProperty] private bool isBusy;
+    private CancellationTokenSource? _pollCts;
+    private bool _polling;
+
 
     public bool CanSendMessage =>
         !string.IsNullOrWhiteSpace(NewMessageText) &&
         _auth.CurrentUser != null;
 
-    public GroupChatViewModel(IChatService chat, IAuthService auth, IUserService users)
+    public GroupChatViewModel(IChatService chat, IAuthService auth)
     {
         _chat = chat;
         _auth = auth;
-        _users = users;
     }
 
     partial void OnNewMessageTextChanged(string value)
@@ -39,6 +39,48 @@ public partial class GroupChatViewModel : ObservableObject
         OnPropertyChanged(nameof(CanSendMessage));
         SendMessageCommand.NotifyCanExecuteChanged();
     }
+
+    public void StartPolling()
+    {
+        if (_polling) return;
+        _polling = true;
+
+        _pollCts = new CancellationTokenSource();
+        var token = _pollCts.Token;
+
+        _ = Task.Run(async () =>
+        {
+            while (!token.IsCancellationRequested)
+            {
+                try
+                {
+                    await Task.Delay(2000, token);
+
+                    // ВАЖНО: ObservableCollection обновляем только на UI-потоке
+                    await MainThread.InvokeOnMainThreadAsync(async () =>
+                    {
+                        await RefreshAsync();
+                    });
+                }
+                catch (TaskCanceledException)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Polling error: {ex}");
+                }
+            }
+        }, token);
+    }
+
+    public void StopPolling()
+    {
+        _polling = false;
+        _pollCts?.Cancel();
+        _pollCts = null;
+    }
+
 
     private string GetRoomId()
     {
@@ -71,15 +113,18 @@ public partial class GroupChatViewModel : ObservableObject
                 return;
             }
 
-            var allUsers = await _users.GetAllAsync();
-            var dict = allUsers.ToDictionary(u => u.Id, u => u.Login);
+            var myId = me.Id?.ToString() ?? "";
 
-            var list = await _chat.GetMessagesAsync(roomId);
+            var list = await _chat.GetMessagesAsync(roomId, 0);
 
             foreach (var m in list)
             {
-                m.IsMine = (m.UserId == me.Id);
-                m.SenderName = dict.TryGetValue(m.UserId, out var name) ? name : "unknown";
+                var sender = m.UserId?.ToString() ?? "";
+                m.IsMine = (sender == myId);
+
+                if (string.IsNullOrWhiteSpace(m.SenderName))
+                    m.SenderName = sender;
+
                 Items.Add(m);
             }
 
@@ -110,29 +155,70 @@ public partial class GroupChatViewModel : ObservableObject
             return;
         }
 
-        var text = NewMessageText.Trim();
+        var text = (NewMessageText ?? "").Trim();
         if (text.Length == 0) return;
 
         NewMessageText = "";
 
         try
         {
-            var sent = await _chat.SendMessageAsync(roomId, me.Id, text);
+            var sent = await _chat.SendMessageAsync(roomId, 0, me.Id, text);
 
-            // UI fields
             sent.IsMine = true;
             sent.SenderName = me.Login;
 
             Items.Add(sent);
         }
         catch (Exception ex)
-        {   
+        {
             System.Diagnostics.Debug.WriteLine(ex);
             NewMessageText = text;
-
             await MauiApp.Current!.MainPage!.DisplayAlert("Error", "Message send failed.", "OK");
-
-
         }
     }
+    public async Task RefreshAsync()
+    {
+        if (IsBusy) return;
+        IsBusy = true;
+
+        try
+        {
+            var me = _auth.CurrentUser;
+            if (me == null) return;
+
+            var roomId = GetRoomId();
+            if (string.IsNullOrWhiteSpace(roomId)) return;
+
+            var myId = me.Id?.ToString() ?? "";
+
+            var list = await _chat.GetMessagesAsync(roomId, 0);
+
+            foreach (var m in list.OrderBy(x => x.CreatedAt))
+            {
+                var key = $"{m.CreatedAt:o}|{m.UserId}|{m.Msg}";
+                if (_seenIds.Contains(key))
+                    continue;
+
+                _seenIds.Add(key);
+
+                var sender = m.UserId?.ToString() ?? "";
+                m.IsMine = (sender == myId);
+
+                if (string.IsNullOrWhiteSpace(m.SenderName))
+                    m.SenderName = sender;
+
+                Items.Add(m);
+
+                if (m.CreatedAt > _lastSeen)
+                    _lastSeen = m.CreatedAt;
+            }
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+
+
+    }
+
 }

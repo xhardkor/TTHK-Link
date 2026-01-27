@@ -11,7 +11,7 @@ namespace TTHK_Link.ViewModels;
 public partial class CourseTopicsViewModel : ObservableObject
 {
     private readonly IAuthService _auth;
-    private readonly ICourseTopicsService _topics;
+    private readonly IChatService _chat;
 
     [ObservableProperty] private string courseId = "";
     [ObservableProperty] private string courseName = "";
@@ -20,10 +20,15 @@ public partial class CourseTopicsViewModel : ObservableObject
 
     public ObservableCollection<CourseTopic> Items { get; } = new();
 
-    public CourseTopicsViewModel(IAuthService auth, ICourseTopicsService topics)
+    public CourseTopicsViewModel(IAuthService auth, IChatService chat)
     {
         _auth = auth;
-        _topics = topics;
+        _chat = chat;
+    }
+
+    private string GetRoomId()
+    {
+        return string.IsNullOrWhiteSpace(CourseId) ? "" : $"course:{CourseId}";
     }
 
     [RelayCommand]
@@ -43,9 +48,27 @@ public partial class CourseTopicsViewModel : ObservableObject
                 return;
             }
 
-            var list = await _topics.GetTopicsAsync(CourseId);
-            foreach (var t in list)
-                Items.Add(t);
+            var roomId = GetRoomId();
+            if (string.IsNullOrWhiteSpace(roomId))
+            {
+                Error = "RoomId missing.";
+                return;
+            }
+
+            var list = await _chat.GetMessagesAsync(roomId, 0);
+
+            foreach (var m in list)
+            {
+                Items.Add(new CourseTopic
+                {
+                    Id = m.Id,
+                    CourseId = CourseId,
+                    Title = ExtractTitle(m.Msg),
+                    Body = ExtractBody(m.Msg),
+                    AuthorLogin = m.SenderName,
+                    CreatedAt = m.CreatedAt
+                });
+            }
         }
         catch (Exception ex)
         {
@@ -84,7 +107,11 @@ public partial class CourseTopicsViewModel : ObservableObject
         if (string.IsNullOrWhiteSpace(body))
             return;
 
-        await _topics.CreateTopicAsync(CourseId, title, body, user);
+        var roomId = GetRoomId();
+
+        var msg = $"{title.Trim()}\n{body.Trim()}";
+        await _chat.SendMessageAsync(roomId, 0, user.Id, msg);
+
         await LoadAsync();
     }
 
@@ -93,7 +120,23 @@ public partial class CourseTopicsViewModel : ObservableObject
     {
         if (topic == null) return;
 
-        var id = Uri.EscapeDataString(topic.Id);
-        await Shell.Current.GoToAsync($"topicChat?topicId={id}");
+        var topicId = Uri.EscapeDataString(topic.Id);
+        var courseId = Uri.EscapeDataString(CourseId);
+
+        await Shell.Current.GoToAsync($"topicChat?courseId={courseId}&topicId={topicId}");
+    }
+
+    private static string ExtractTitle(string msg)
+    {
+        if (string.IsNullOrWhiteSpace(msg)) return "";
+        var idx = msg.IndexOf('\n');
+        return idx >= 0 ? msg[..idx].Trim() : msg.Trim();
+    }
+
+    private static string ExtractBody(string msg)
+    {
+        if (string.IsNullOrWhiteSpace(msg)) return "";
+        var idx = msg.IndexOf('\n');
+        return idx >= 0 ? msg[(idx + 1)..].Trim() : "";
     }
 }

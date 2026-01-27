@@ -3,7 +3,7 @@ using TTHK_Link.Services.Interfaces;
 
 namespace TTHK_Link.Services.Fake;
 
-public class FakeCourseTopicsService : ICourseTopicsService
+public class FakeCourseTopicsService //: ICourseTopicsService
 {
     private readonly List<CourseTopic> _topics = new();
 
@@ -13,8 +13,8 @@ public class FakeCourseTopicsService : ICourseTopicsService
         {
             Id = "t1",
             CourseId = "c1",
-            Title = "Домашка Nr 5",
-            Body = "Как вы решили эту проблему?",
+            Title = "Kodutoo nr. 5",
+            Body = "Kuidas lahendada see probleem?",
             AuthorLogin = "admin",
             CreatedAt = DateTime.UtcNow.AddHours(-5)
         });

@@ -62,6 +62,7 @@ public class ApiAuthService : IAuthService
         if (data == null)
             return false;
 
+        // token is base64 string (Go []byte)
         Token = string.IsNullOrWhiteSpace(data.Token) ? null : data.Token;
 
         CurrentUser = new User
@@ -75,7 +76,7 @@ public class ApiAuthService : IAuthService
         var courses = data.Courses
             .Select(c => new Course
             {
-                Id = c.Name,              // временно, так как course_id нет
+                Id = c.Id.ToString(),          // <-- id
                 GroupId = c.GroupId,
                 CourseName = c.Name,
                 Description = c.Desc
@@ -85,8 +86,10 @@ public class ApiAuthService : IAuthService
         _cache.SetBootstrapCourses(courses);
 
         System.Diagnostics.Debug.WriteLine($"BOOTSTRAP COURSES COUNT: {courses.Count}");
+        System.Diagnostics.Debug.WriteLine($"TOKEN LEN: {(Token == null ? 0 : Token.Length)}");
 
         return true;
+
 
     }
 

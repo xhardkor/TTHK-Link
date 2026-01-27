@@ -22,6 +22,7 @@ public partial class TopicChatPage : ContentPage, IQueryAttributable
         foreach (var kv in query)
             System.Diagnostics.Debug.WriteLine($"TOPIC QUERY: {kv.Key} = {kv.Value}");
 
+        Vm.CourseId = GetQueryValue(query, "courseId");
         Vm.TopicId = GetQueryValue(query, "topicId");
 
         MainThread.BeginInvokeOnMainThread(async () =>
@@ -29,6 +30,7 @@ public partial class TopicChatPage : ContentPage, IQueryAttributable
             await Vm.LoadAsync();
         });
     }
+
 
     protected override async void OnAppearing()
     {

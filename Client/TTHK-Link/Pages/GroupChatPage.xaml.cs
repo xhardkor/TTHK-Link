@@ -1,6 +1,5 @@
-using TTHK_Link.ViewModels;
-
 namespace TTHK_Link.Pages;
+using TTHK_Link.ViewModels;
 
 public partial class GroupChatPage : ContentPage
 {
@@ -15,6 +14,24 @@ public partial class GroupChatPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await Vm.LoadAsync();
+        System.Diagnostics.Debug.WriteLine("=== GroupChatPage OnAppearing ===");
+
+        if (Vm.Items.Count == 0 && !Vm.IsBusy)
+            await Vm.LoadAsync();
+
+        Vm.StartPolling(); 
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        Vm.StopPolling(); // 
+    }
+
+    private async void OnEntryCompleted(object sender, EventArgs e)
+    {
+        if (Vm.CanSendMessage)
+            await Vm.SendMessageAsync();
     }
 }
+

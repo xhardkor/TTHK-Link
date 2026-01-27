@@ -23,6 +23,26 @@ public class FakeAuthService : IAuthService
 
     }
 
+    //b/     subject      /TOP/messages
+    /*
+     {
+         "group":
+     }
+     
+     
+     */
+    //a - groupchat
+    //b - topic
+    //c - topicchat
+
+    //a/subject/topic/messages
+
+
+    
+
+
+
+
     public Task<bool> LoginAsync(LoginRequest request)
     {
         if (_users.TryGetValue(request.Username, out var entry) &&

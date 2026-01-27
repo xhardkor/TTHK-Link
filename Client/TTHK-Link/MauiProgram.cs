@@ -29,21 +29,52 @@ public static class MauiProgram
             });
         // …
 
-        // FAKE AUTH SERVICE
-        builder.Services.AddSingleton<IAuthService, FakeAuthService>();
+
+
+
+        // =======================
+        // AUTH MODE: FAKE / REAL
+        // =======================
+
+        //// FAKE AUTH SERVICE
+        //builder.Services.AddSingleton<IAuthService, FakeAuthService>();
 
 
         builder.Services.AddTransient<HttpLoggingHandler>();
 
-        ////// REAL AUTOH SERVICE
-        //builder.Services.AddHttpClient<ApiAuthService>(c =>
-        //{
-        //    // Serveri aadress (sama mis Postmanis)
-        //    c.BaseAddress = new Uri("http://172.20.10.2:8080");
-        //}).AddHttpMessageHandler<HttpLoggingHandler>();
 
-        //builder.Services.AddSingleton<IAuthService>(sp =>
-        //    sp.GetRequiredService<ApiAuthService>());
+        // =======================
+
+        //// REAL AUTOH SERVICE
+
+        builder.Services.AddHttpClient<ApiAuthService>(c =>
+        {
+            c.BaseAddress = new Uri("http://192.168.93.141:8080");
+        }).AddHttpMessageHandler<HttpLoggingHandler>();
+
+        builder.Services.AddHttpClient<ApiChatService>(c =>
+        {
+            c.BaseAddress = new Uri("http://192.168.93.141:8080");
+        }).AddHttpMessageHandler<HttpLoggingHandler>();
+
+        builder.Services.AddHttpClient<ApiCourseService>(c =>
+        {
+            c.BaseAddress = new Uri("http://192.168.93.141:8080"); // 
+        }).AddHttpMessageHandler<HttpLoggingHandler>();
+
+        builder.Services.AddSingleton<ICourseService>(sp =>
+            sp.GetRequiredService<ApiCourseService>());
+
+
+
+
+        builder.Services.AddSingleton<IAuthService>(sp =>
+            sp.GetRequiredService<ApiAuthService>());
+
+        // =======================
+
+
+
 
         //menu shell
         builder.Services.AddSingleton<AppShell>();
@@ -52,12 +83,19 @@ public static class MauiProgram
 
 
 
-        builder.Services.AddSingleton<ICourseService, FakeCourseService>();
-        builder.Services.AddSingleton<IChatService, FakeChatService>();
-        builder.Services.AddSingleton<IUserService, FakeUserService>();
-        builder.Services.AddSingleton<ICourseTopicsService, FakeCourseTopicsService>();
-        builder.Services.AddSingleton<ITopicCommentsService, FakeTopicCommentsService>();
+        //builder.Services.AddSingleton<ICourseService, FakeCourseService>();
+        //builder.Services.AddSingleton<IChatService, InMemoryChatService>();
+        //builder.Services.AddSingleton<IUserService, FakeUserService>();
+        //builder.Services.AddSingleton<ICourseTopicsService, FakeCourseTopicsService>();
+        //builder.Services.AddSingleton<ITopicCommentsService, FakeTopicCommentsService>();
         builder.Services.AddSingleton<INewsService, FakeNewsService>();
+
+        builder.Services.AddSingleton<IChatService>(sp =>
+            sp.GetRequiredService<ApiChatService>());
+
+        
+        
+
 
 
         // view models
