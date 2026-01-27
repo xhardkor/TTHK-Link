@@ -4,11 +4,96 @@
     x:Class="TTHK_Link.Pages.SettingsPage"
     Title="Settings">
 
-    <Grid>
-        <Label
-            Text="Settings"
-            HorizontalOptions="Center"
-            VerticalOptions="Center"
-            FontSize="18" />
-    </Grid>
+    <ScrollView>
+        <VerticalStackLayout Spacing="14">
+
+            <!-- Appearance -->
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+
+                    <Label
+                        Text="Appearance"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        TextColor="{StaticResource PrimaryTextColor}" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label
+                            Text="Dark mode"
+                            FontSize="14"
+                            TextColor="{StaticResource PrimaryTextColor}" />
+                        <Switch Grid.Column="1" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label
+                            Text="Language"
+                            FontSize="14"
+                            TextColor="{StaticResource PrimaryTextColor}" />
+                        <Label
+                            Grid.Column="1"
+                            Text="English"
+                            TextColor="{StaticResource SecondaryTextColor}" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Notifications -->
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+
+                    <Label
+                        Text="Notifications"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        TextColor="{StaticResource PrimaryTextColor}" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label
+                            Text="Push notifications"
+                            FontSize="14"
+                            TextColor="{StaticResource PrimaryTextColor}" />
+                        <Switch Grid.Column="1" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label
+                            Text="Email notifications"
+                            FontSize="14"
+                            TextColor="{StaticResource PrimaryTextColor}" />
+                        <Switch Grid.Column="1" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- App info -->
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+
+                    <Label
+                        Text="About"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        TextColor="{StaticResource PrimaryTextColor}" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label
+                            Text="Version"
+                            FontSize="14"
+                            TextColor="{StaticResource SecondaryTextColor}" />
+                        <Label
+                            Grid.Column="1"
+                            Text="1.0.0"
+                            FontSize="14"
+                            TextColor="{StaticResource PrimaryTextColor}" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
 </ContentPage>
