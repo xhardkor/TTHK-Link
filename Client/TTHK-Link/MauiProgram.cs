@@ -63,6 +63,8 @@ public static class MauiProgram
         // view models
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<CoursesViewModel>();
+        builder.Services.AddTransient<TTHK_Link.ViewModels.SettingsViewModel>();
+        builder.Services.AddTransient<TTHK_Link.Pages.SettingsPage>();
         //builder.Services.AddTransient<ChatViewModel>();
         builder.Services.AddTransient<RegisterViewModel>();
         builder.Services.AddTransient<CourseTopicsViewModel>();
