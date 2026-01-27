@@ -123,5 +123,28 @@
     <FlyoutItem Title="Settings" Route="settings" IsVisible="{Binding IsAuthenticated}" Icon="settings.png">
         <ShellContent ContentTemplate="{DataTemplate pages:SettingsPage}" />
     </FlyoutItem>
+    
+    <!-- Flyout footer -->
+    <Shell.FlyoutFooter>
+        <Grid Padding="16">
+            <Frame
+                CornerRadius="14"
+                BorderColor="#E5E7EB"
+                HasShadow="False"
+                Padding="14">
+
+                <Label
+                    Text="Logout"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    TextColor="#B61E2E"
+                    HorizontalTextAlignment="Center"
+                    VerticalTextAlignment="Center"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Center" />
+
+            </Frame>
+        </Grid>
+    </Shell.FlyoutFooter>
 
 </Shell>
