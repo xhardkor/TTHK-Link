@@ -1,0 +1,95 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TTHK_Link.Pages.ProfilePage"
+    Title="Profile">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="14">
+
+            <!-- Profile card -->
+            <Frame Style="{StaticResource Card}">
+                <Grid ColumnDefinitions="Auto,*"
+                      ColumnSpacing="12"
+                      VerticalOptions="Center">
+
+                    <!-- Avatar -->
+                    <Frame WidthRequest="56"
+                           HeightRequest="56"
+                           CornerRadius="28"
+                           BackgroundColor="#9E1A28"
+                           HasShadow="False"
+                           Padding="0"
+                           VerticalOptions="Center">
+                        <Label Text="A"
+                               TextColor="White"
+                               FontSize="28"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Frame>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                        <Label Text="admin" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource PrimaryTextColor}" />
+                        <Label Text="🙂 Online" FontSize="13" TextColor="{StaticResource SecondaryTextColor}" />
+                    </VerticalStackLayout>
+
+                </Grid>
+            </Frame>
+
+            <!-- Info -->
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+
+                    <!-- Info row -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Email" TextColor="{StaticResource SecondaryTextColor}" FontSize="16" />
+                        <Label Grid.Column="1" Text="admin@tthk.ee" TextColor="{StaticResource PrimaryTextColor}" FontSize="16" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Role" TextColor="{StaticResource SecondaryTextColor}" FontSize="16" />
+                        <Label Grid.Column="1" Text="Admin" TextColor="{StaticResource PrimaryTextColor}" FontSize="16" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Group" TextColor="{StaticResource SecondaryTextColor}" FontSize="16" />
+                        <Label Grid.Column="1" Text="TTHK-01" TextColor="{StaticResource PrimaryTextColor}" FontSize="16" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Actions -->
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Button Text="Edit profile" Style="{StaticResource OutlineButton}" />
+                    <Button Text="Change password" Style="{StaticResource OutlineButton}" />
+                    <Button Text="Notifications" Style="{StaticResource OutlineButton}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Logout -->
+            <Border
+                Stroke="#E5E7EB"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 14"
+                Padding="0">
+
+                <Button
+                    Text="Logout"
+                    BackgroundColor="Transparent"
+                    TextColor="#B61E2E"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    HeightRequest="52"
+                    HorizontalOptions="Fill" />
+
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

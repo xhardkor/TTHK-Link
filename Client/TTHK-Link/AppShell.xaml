@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="TTHK_Link.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:TTHK_Link.Pages"
+    Title="TTHK_Link"
+    FlyoutBehavior="{Binding FlyoutBehavior}"
+    Shell.BackgroundColor="#B61E2E"
+    Shell.TitleColor="White"
+    Shell.ForegroundColor="White"
+    Shell.NavBarHasShadow="False">
+    
+    <Shell.ItemTemplate>
+        <DataTemplate>
+            <Grid
+                Padding="16,12"
+                ColumnDefinitions="Auto,*"
+                ColumnSpacing="16">
+
+                <!-- Menu icon -->
+                <Image
+                    Source="{Binding Icon}"
+                    WidthRequest="24"
+                    HeightRequest="24"
+                    VerticalOptions="Center" />
+
+                <!-- Menu title -->
+                <Label
+                    Grid.Column="1"
+                    Text="{Binding Title}"
+                    FontSize="20"
+                    TextColor="#111111"
+                    VerticalOptions="Center" />
+            </Grid>
+        </DataTemplate>
+    </Shell.ItemTemplate>
+    
+    <Shell.Resources>
+        <Style TargetType="Element">
+            <!-- Flyout background -->
+            <Setter Property="Shell.FlyoutBackgroundColor" Value="White" />
+        </Style>
+           
+    </Shell.Resources>
+    
+    
+    <!-- Header -->
+    <Shell.FlyoutHeader>
+        <Grid Padding="20"
+              BackgroundColor="#B61E2E"
+              RowDefinitions="Auto,Auto"
+              ColumnDefinitions="Auto,*"
+              ColumnSpacing="12">
+
+            
+            <!-- Avatar circle -->
+            <Frame WidthRequest="56"
+               HeightRequest="56"
+               CornerRadius="28"
+               BackgroundColor="#9E1A28"
+               HasShadow="False"
+               Padding="0"
+               VerticalOptions="Center">
+
+                <Grid>
+                    <Label Text="{Binding AvatarLetter}"
+                       TextColor="White"
+                       FontSize="30"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center" />    
+                </Grid>
+            </Frame>
+
+            <!-- Login -->
+            <VerticalStackLayout Grid.Column="1"
+                                 VerticalOptions="Center">
+                <Label Text="{Binding Login}"
+                       TextColor="White"
+                       FontSize="16"
+                       FontAttributes="Bold" />
+                <Label Text="{Binding StatusText}"
+                   TextColor="#FECACA"
+                   FontSize="12" />     
+
+            </VerticalStackLayout>
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    <!-- auth pages (not shown in flyout) -->
+    <ShellContent
+        Route="login"
+        Title="Login"
+        Shell.FlyoutItemIsVisible="False"
+        ContentTemplate="{DataTemplate pages:LoginPage}" />
+
+    <ShellContent
+        Route="register"
+        Title="Register"
+        Shell.FlyoutItemIsVisible="False"
+        ContentTemplate="{DataTemplate pages:RegisterPage}" />
+
+    <!-- main -->
+    <FlyoutItem Title="News" Route="news" IsVisible="{Binding IsAuthenticated}" Icon="news.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:NewsPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Group chat" Route="groupchat" IsVisible="{Binding IsAuthenticated}" Icon="chat.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:GroupChatPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Courses" Route="courses" IsVisible="{Binding IsAuthenticated}" Icon="school.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:CoursesPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Profile" Route="profile" IsVisible="{Binding IsAuthenticated}" Icon="account.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:ProfilePage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Settings" Route="settings" IsVisible="{Binding IsAuthenticated}" Icon="settings.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:SettingsPage}" />
+    </FlyoutItem>
+    
+    <!-- Flyout footer -->
+    <Shell.FlyoutFooter>
+        <Grid Padding="16">
+            <Frame
+                CornerRadius="14"
+                BorderColor="#E5E7EB"
+                HasShadow="False"
+                Padding="0">
+
+                <!-- Logout button -->
+                <Button
+                    Text="Logout"
+                    BackgroundColor="Transparent"
+                    TextColor="#B61E2E"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    HeightRequest="52"
+                    HorizontalOptions="Fill" />
+
+            </Frame>
+        </Grid>
+    </Shell.FlyoutFooter>
+
+</Shell>

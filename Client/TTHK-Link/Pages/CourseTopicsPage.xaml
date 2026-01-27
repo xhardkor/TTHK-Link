@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TTHK_Link.Pages.CourseTopicsPage"
+    Title="{Binding CourseName}"
+    Shell.NavBarIsVisible="True">
+
+    <Grid RowDefinitions="Auto,*,Auto"
+          Padding="16"
+          RowSpacing="10">
+
+        <Label Grid.Row="0"
+               Text="{Binding Error}"
+               TextColor="Red" />
+
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Items}"
+                        SelectionMode="None">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <!-- ВАЖНО: BackgroundColor="Transparent" для hit-test на Android -->
+                    <Grid Padding="0"
+                          Margin="0,6,0,0"
+                          BackgroundColor="Transparent">
+
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Tapped="OnTopicTapped"
+                                CommandParameter="{Binding .}" />
+                        </Grid.GestureRecognizers>
+
+                        <!-- Визуальная карточка -->
+                        <Border Padding="12"
+                                StrokeThickness="1"
+                                Stroke="{AppThemeBinding Light=#E5E7EB, Dark=#374151}"
+                                Background="{AppThemeBinding Light=White, Dark=#111827}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding Title}"
+                                       FontAttributes="Bold" />
+
+                                <Label Text="{Binding Body}"
+                                       FontSize="12"
+                                       Opacity="0.8"
+                                       LineBreakMode="TailTruncation" />
+
+                                <HorizontalStackLayout Spacing="10">
+                                    <Label Text="{Binding AuthorLogin}"
+                                           FontSize="11"
+                                           Opacity="0.7" />
+                                    <Label Text="{Binding CreatedAt}"
+                                           FontSize="11"
+                                           Opacity="0.7" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Border>
+
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Grid.Row="2"
+                Text="+ Add topic"
+                Command="{Binding AddTopicCommand}" />
+    </Grid>
+</ContentPage>

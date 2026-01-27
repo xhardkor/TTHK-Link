@@ -1,0 +1,35 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TTHK_Link.Pages.TopicChatPage"
+    Title="Discussion">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16" RowSpacing="10">
+
+        <Label Grid.Row="0" Text="{Binding Error}" TextColor="Red" />
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Items}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="0,6,0,0">
+                        <VerticalStackLayout Spacing="4">
+                            <HorizontalStackLayout Spacing="10">
+                                <Label Text="{Binding AuthorLogin}" FontAttributes="Bold" />
+                                <Label Text="{Binding CreatedAt}" FontSize="11" Opacity="0.6" />
+                            </HorizontalStackLayout>
+                            <Label Text="{Binding Text}" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <HorizontalStackLayout Grid.Row="2" Spacing="8">
+            <Entry Placeholder="Write a comment..."
+                   Text="{Binding NewMessage}"
+                   HorizontalOptions="FillAndExpand" />
+            <Button Text="Send" Command="{Binding SendCommand}" />
+        </HorizontalStackLayout>
+
+    </Grid>
+</ContentPage>

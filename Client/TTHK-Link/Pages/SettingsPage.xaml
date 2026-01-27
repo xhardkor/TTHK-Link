@@ -1,0 +1,79 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TTHK_Link.Pages.SettingsPage"
+    Title="Settings">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="14">
+          
+            <!-- Appearance -->
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+
+                    <Label
+                        Text="Appearance"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        TextColor="{StaticResource PrimaryTextColor}" />
+
+                    <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                        <Label
+                            Text="Dark mode"
+                            FontSize="14"
+                            TextColor="{StaticResource PrimaryTextColor}" />
+
+                        <Switch
+                            Grid.Column="1"
+                            IsToggled="{Binding IsDarkMode}" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Notifications -->
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+
+                    <Label
+                        Text="Notifications"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        TextColor="{StaticResource PrimaryTextColor}" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Push notifications" FontSize="14" />
+                        <Switch Grid.Column="1"
+                                IsToggled="{Binding PushNotifications}" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Email notifications" FontSize="14" />
+                        <Switch Grid.Column="1"
+                                IsToggled="{Binding EmailNotifications}" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Language -->
+            <Frame Style="{StaticResource Card}">
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                    <Label
+                        Text="Language"
+                        FontSize="14"
+                        TextColor="{StaticResource PrimaryTextColor}" />
+
+                    <Label
+                        Grid.Column="1"
+                        Text="{Binding Language}"
+                        FontSize="14"
+                        TextColor="{StaticResource SecondaryTextColor}" />
+                </Grid>
+            </Frame>
+           
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

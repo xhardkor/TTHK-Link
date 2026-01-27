@@ -1,0 +1,152 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TTHK_Link.Pages.GroupChatPage"
+    Title="Group chat"
+    BackgroundColor="White">
+
+    <Grid RowDefinitions="*,Auto" Padding="12" RowSpacing="10">
+
+        <!-- Messages -->
+        <CollectionView x:Name="MessagesList"
+                        Grid.Row="0"
+                        ItemsSource="{Binding Items}"
+                        SelectionMode="None">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,4">
+
+                        <!-- bubble -->
+                        <Border x:Name="Bubble"
+                                Padding="10"
+                                StrokeThickness="0"
+                                BackgroundColor="#F3F4F6"
+                                HorizontalOptions="Start"
+                                MaximumWidthRequest="320">
+
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="14" />
+                            </Border.StrokeShape>
+
+                            <VerticalStackLayout Spacing="6">
+
+                                <!-- sender (only if not mine) -->
+                                <Label Text="{Binding SenderName}"
+                                       FontSize="11"
+                                       FontAttributes="Bold"
+                                       TextColor="#6B7280">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label"
+                                                     Binding="{Binding IsMine}"
+                                                     Value="True">
+                                            <Setter Property="IsVisible" Value="False" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+
+                                <!-- image (optional) -->
+                                <Border x:Name="ImageWrap"
+                                        HeightRequest="160"
+                                        BackgroundColor="#E5E7EB"
+                                        IsVisible="False">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12" />
+                                    </Border.StrokeShape>
+
+                                    <Image Source="{Binding ImageUrl}"
+                                           Aspect="AspectFill" />
+                                </Border>
+
+                                <!-- message text -->
+                                <Label x:Name="MsgText"
+                                       Text="{Binding Msg}"
+                                       FontSize="14"
+                                       TextColor="#111111" />
+
+                                <!-- time -->
+                                <Label x:Name="TimeText"
+                                       Text="{Binding CreatedAt, StringFormat='{0:HH:mm}'}"
+                                       FontSize="10"
+                                       TextColor="#9CA3AF"
+                                       HorizontalOptions="End" />
+
+                            </VerticalStackLayout>
+
+                            <!-- If mine: move right + red bubble -->
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border"
+                                             Binding="{Binding IsMine}"
+                                             Value="True">
+                                    <Setter Property="HorizontalOptions" Value="End" />
+                                    <Setter Property="BackgroundColor" Value="#B61E2E" />
+                                </DataTrigger>
+
+                                <!-- If has image -->
+                                <DataTrigger TargetType="Border"
+                                             Binding="{Binding ImageUrl}"
+                                             Value="{x:Null}">
+                                    <!-- nothing, stays hidden -->
+                                </DataTrigger>
+                            </Border.Triggers>
+                        </Border>
+
+                        <!-- Triggers for text colors + image visibility -->
+                        <Grid.Triggers>
+                            <!-- If mine: white text -->
+                            <DataTrigger TargetType="Grid"
+                                         Binding="{Binding IsMine}"
+                                         Value="True">
+                                <Setter TargetName="MsgText" Property="Label.TextColor" Value="White" />
+                                <Setter TargetName="TimeText" Property="Label.TextColor" Value="#FECACA" />
+                            </DataTrigger>
+
+                            <!-- If ImageUrl not null: show image -->
+                            <DataTrigger TargetType="Grid"
+                                         Binding="{Binding ImageUrl}"
+                                         Value="">
+                                <Setter TargetName="ImageWrap" Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Grid.Triggers>
+
+                        <!--  -->
+                        <Grid.Behaviors>
+                            <!--  -->
+                        </Grid.Behaviors>
+
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Input area -->
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*,Auto"
+              ColumnSpacing="10">
+
+            <Border Stroke="#E5E7EB"
+                    StrokeThickness="1"
+                    BackgroundColor="White"
+                    Padding="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+
+                <Entry Placeholder="Message..."
+                       Text="{Binding NewMessageText}"
+                       ReturnType="Send"
+                       Completed="OnEntryCompleted" />
+            </Border>
+
+            <Button Grid.Column="1"
+                    Text="Send"
+                    BackgroundColor="#B61E2E"
+                    TextColor="White"
+                    CornerRadius="14"
+                    Padding="14,10"
+                    Command="{Binding SendMessageCommand}"
+                    IsEnabled="{Binding CanSendMessage}" />
+        </Grid>
+
+    </Grid>
+</ContentPage>

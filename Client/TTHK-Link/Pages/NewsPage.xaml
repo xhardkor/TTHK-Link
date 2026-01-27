@@ -1,0 +1,71 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TTHK_Link.Pages.NewsPage"
+    Title="News"
+    BackgroundColor="White">
+
+    <Grid Padding="16" RowDefinitions="Auto,*" RowSpacing="10">
+
+        <Label Grid.Row="0" Text="{Binding Error}" TextColor="Red" />
+
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Items}"
+                        SelectionMode="Single"
+                        SelectionChanged="OnSelected">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="0,0,0,12"
+                            Padding="12"
+                            BackgroundColor="White"
+                            Stroke="#E5E7EB"
+                            StrokeThickness="1">
+
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="14" />
+                        </Border.StrokeShape>
+
+                        <Border.Shadow>
+                            <Shadow Opacity="0.15" Radius="12" Offset="0,6" />
+                        </Border.Shadow>
+
+                        <VerticalStackLayout Spacing="10">
+
+                            <!-- TITLE -->
+                            <Label Text="{Binding Title}"
+                                   FontAttributes="Bold"
+                                   FontSize="16"
+                                   TextColor="#111111"
+                                   LineBreakMode="TailTruncation" />
+
+                            <!-- IMAGE -->
+                            <Border HeightRequest="180" BackgroundColor="#F3F4F6">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12" />
+                                </Border.StrokeShape>
+
+                                <Image Source="{Binding ImageUrl}"
+                                       Aspect="AspectFill" />
+                            </Border>
+
+                            <!-- TEXT -->
+                            <Label Text="{Binding Summary}"
+                                   FontSize="13"
+                                   TextColor="#374151"
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="4" />
+
+                            <!-- Date -->
+                            <Label Text="{Binding PublishDate, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+                                   FontSize="11"
+                                   TextColor="#6B7280" />
+
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+</ContentPage>

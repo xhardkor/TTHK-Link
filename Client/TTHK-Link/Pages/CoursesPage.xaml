@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TTHK_Link.Pages.CoursesPage"
+    Title="Courses"
+    Shell.NavBarIsVisible="True">
+
+    <Grid Padding="16"
+          RowDefinitions="Auto,*"
+          RowSpacing="10">
+
+        <Label Grid.Row="0"
+               Text="{Binding Error}"
+               TextColor="Red" />
+
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Items}"
+                        SelectionMode="Single"
+                        SelectionChanged="OnCourseSelected">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="12"
+                            Margin="0,6,0,0"
+                            StrokeThickness="1"
+                            Stroke="{AppThemeBinding Light=#E5E7EB, Dark=#374151}"
+                            Background="{AppThemeBinding Light=White, Dark=#111827}">
+
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12" />
+                        </Border.StrokeShape>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding CourseName}"
+                                   FontAttributes="Bold" />
+
+                            <Label Text="{Binding Description}"
+                                   FontSize="12"
+                                   Opacity="0.7"
+                                   LineBreakMode="TailTruncation" />
+
+                            <Label Text="{Binding GroupId}"
+                                   FontSize="10"
+                                   Opacity="0.5" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </Grid>
+</ContentPage>
